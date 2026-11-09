@@ -1,0 +1,61 @@
+@startuml 04_process_training
+title SpeedLimit: training process (BPMN-style swimlanes)
+skinparam shadowing false
+skinparam defaultFontSize 12
+skinparam ActivityDiamondBackgroundColor #FFF4D6
+
+|DataLoader + DataCleaner|
+start
+:Read CSV files
+(BOM, ";", decimal comma,
+optional header);
+:Drop licence plates;
+:Repair months, remove duplicates,
+null out-of-range values;
+:Combine redundant sensors by median,
+fill short gaps;
+:Build one row per hour (744);
+
+|NearAccidentLabeler|
+:Shift accident hours 1..24 to 0..23;
+:Count near-accidents per hour
+(SkidAngle, CloseCarCm, CloseGuardrailCm);
+
+|DataValidator|
+:Run hard checks and warnings;
+:Write data_validation.json;
+if (All hard checks pass?) then (no)
+  :Stop: raise DataValidationError; <<#FFDDDD>>
+  stop
+else (yes)
+  :Allow training;
+endif
+
+|FeatureBuilder|
+:Keep dark or black-ice hours (389);
+:Build 9 features;
+
+|EnsembleTrainer|
+:Split by day
+train 1-21, validation 22-26, test 27-31;
+:Fit scaler on training days only;
+fork
+  :Network 1
+  (seed, day bootstrap,
+  early stopping);
+fork again
+  :Networks 2..9;
+fork again
+  :Network 10;
+end fork
+:Save ensemble, scaler, support
+and skill to model.pt;
+
+|Evaluator|
+:Compare with constant baseline and GLM
+(Poisson deviance, MAE, MSE);
+:Repeat with day-grouped cross-validation;
+:Measure ensemble coverage;
+:Write training_report.json;
+stop
+@enduml

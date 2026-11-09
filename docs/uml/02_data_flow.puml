@@ -1,0 +1,47 @@
+@startuml 02_data_flow
+title SpeedLimit: data flow of one operational cycle
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam nodesep 70
+skinparam ranksep 55
+skinparam defaultFontSize 12
+
+actor Operator
+[GUI / Scheduler] as GUI
+[CycleOrchestrator] as Cycle
+[InputGuardrail] as Guard
+[Router] as Router
+[FeatureBuilder] as Features
+[Ensemble Predictor\n(10 neural networks)] as NN
+[WeatherPolicy] as Weather
+[AirQualityClient] as Air
+[LLMManager] as LLM
+[SpeedLimitDecider] as Decider
+cloud "Open-Meteo" as Api
+cloud "Ollama" as Ollama
+database "decisions.jsonl" as Log
+
+Operator --> GUI : <<flow>> readings with units,\noverride
+GUI --> Cycle : <<flow>> readings
+Cycle --> Guard : <<flow>> readings
+Guard --> Cycle : <<flow>> valid / rejected
+Cycle --> Router : <<flow>> illuminance mlx,\nwater um, temperature C
+Router --> Cycle : <<flow>> dark?, black ice?
+Cycle --> Features : <<flow>> readings, 40/50/60/70 km/h
+Features --> NN : <<flow>> one row per candidate
+NN --> Weather : <<flow>> mean, 90% range,\nP(rate <= 1/h) per candidate
+Weather --> Cycle : <<flow>> limit km/h, REQ1 flag,\nNN confidence + reasons
+Cycle --> Air : <<flow>> request forecast
+Air --> Api : <<flow>> coordinates
+Api --> Air : <<flow>> PM10, NO2 ug/m3
+Air --> Cycle : <<flow>> worst PM10, NO2
+Cycle --> LLM : <<flow>> PM10, NO2
+LLM --> Ollama : <<flow>> prompt, 3 seeds
+Ollama --> LLM : <<flow>> 3 JSON replies
+LLM --> Cycle : <<flow>> reduction km/h,\nLLM confidence + reasons
+Cycle --> Decider : <<flow>> proposals
+Decider --> Cycle : <<flow>> strictest limit, flags
+Cycle --> Log : <<flow>> audit record
+Cycle --> GUI : <<flow>> limit km/h, reasons, confidence
+GUI --> Operator : <<flow>> displayed limit
+@enduml

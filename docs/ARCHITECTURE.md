@@ -1,0 +1,192 @@
+# Architecture and design decisions
+
+This document explains how SpeedLimit is built and why. Results that depend on running the code are in [Results](#results).
+
+## 1. The problem
+
+The highway operator wants the limit set automatically:
+
+| ID | Rule |
+|---|---|
+| REQ1 | When dark or black-ice danger exists, reduce the limit so that near-accidents average at most 1 per hour |
+| REQ2 | When poor air quality is predicted, reduce the limit appropriately. An LLM decides, using an air-quality API |
+| REQ3 | With no reason to reduce, the limit is 80 km/h |
+| SPEC1 | Dark means illuminance below 500 millilux |
+| SPEC2 | Black-ice danger means more than 1000 µm of water and a temperature below 0 °C |
+| SPEC3 | A neural network learns how weather, the current limit and near-accidents are connected |
+| SPEC4 | A near-accident is skidding or coming too close to another car or the guardrail |
+
+## 2. Architecture
+
+An architecture is its components plus the allowed-to-use specification. Both are shown below and enforced by `tests/test_architecture.py`.
+
+![Training stage](uml/01_architecture_training.png)
+
+![Operational stage](uml/01_architecture_operational.png)
+
+| Component | Module | Responsibility in one sentence |
+|---|---|---|
+| Configuration | `core/config.py` | Holds thresholds, sensor mappings, allowed limits and paths in one place |
+| DataLoader + DataCleaner | `core/data.py` | Reads the raw files and produces one clean row per hour with a report of every repair |
+| DataValidator | `core/validation.py` | Decides whether the cleaned table is fit for training |
+| NearAccidentLabeler | `core/labels.py` | Counts near-accidents per hour according to SPEC4 |
+| FeatureBuilder | `core/features.py` | Builds identical model inputs for training and live use |
+| EnsembleTrainer + Predictor | `core/model.py` | Trains 10 small networks, evaluates them and predicts near-accidents per hour |
+| ConfidenceRater | `core/confidence.py` | Turns measurable checks into a confidence level and plain-language reasons |
+| Router | `core/router.py` | Decides whether darkness or black ice applies |
+| InputGuardrail + NormalAbnormal | `core/parameter_ranges.py` | Rejects impossible inputs and classifies each value as Normal or Abnormal |
+| WeatherPolicy | `core/weather_policy.py` | Turns candidate predictions into a limit and checks that the output is legal |
+| AirQualityClient | `core/air_quality.py` | Fetches the worst forecast PM10 and NO₂ of the coming hours |
+| LLMManager | `core/llm_manager.py` | Wraps the LLM with input and output guardrails, repeated sampling and a call log |
+| SpeedLimitDecider | `core/decider.py` | Picks the strictest proposal, otherwise 80 km/h |
+| CycleOrchestrator | `core/cycle.py` | Runs one full decision in fixed order and writes the audit record |
+| GUI + Scheduler | `app.py` | Lets the operator enter readings, run on a timer, see reasons and override |
+| RetrainingAnalysis | `core/retraining.py` | Compares Year N+1 with the trained model and recommends what to do |
+
+### How the components cooperate
+
+The GUI or its timer hands readings to the CycleOrchestrator. The InputGuardrail rejects impossible values, and a rejected cycle keeps the current limit. The Router applies SPEC1 and SPEC2. Only if one of them holds does the FeatureBuilder create one row per candidate limit for the ensemble, and the WeatherPolicy turns the predictions into a limit. Independently, the AirQualityClient fetches a forecast and the LLMManager asks the LLM for a reduction. The Decider takes the strictest proposal, or 80 km/h if there is none. The result and its reasons go to the audit log and the screen.
+
+The orchestration is static. The programmer fixed the steps at design time, and the network and the LLM only supply values. A safety-related decision should not depend on an agent choosing its own next step.
+
+![Data flow](uml/02_data_flow.png)
+
+### Process design
+
+The lecture recommends BPMN for describing processes. PlantUML has no BPMN notation, so these are swimlane activity diagrams using the same ideas (the "Almost BPMN" style from the lecture):
+
+| BPMN element | In these diagrams |
+|---|---|
+| Pool or lane | Swimlane named after the component |
+| Exclusive gateway | Yellow diamond |
+| Parallel gateway | Fork and end fork bar |
+| Task | Rounded box |
+| Start and end events | Black circle and bullseye |
+
+![Training process](uml/04_process_training.png)
+
+![Operational process](uml/05_process_operation.png)
+
+![Sequence diagram](uml/06_sequence_set_limit.png)
+
+### Data model
+
+![Data model](uml/03_data_model.png)
+
+Accidents have no link to sensors. They are joined by day and hour only, which is why the hour shift in the labeler matters.
+
+## 3. Why these choices
+
+| Choice | Reason |
+|---|---|
+| Router and Decider are plain code | SPEC1, SPEC2 and REQ3 are exact rules. A model would add risk and no value, and plain code can be tested exhaustively at its boundaries |
+| Static orchestration | The order of steps is known. Fixed steps are testable and auditable |
+| Validation gate before training | A model cannot be better than its data. The gate makes "the data is fit for use" a checked fact and stops training otherwise |
+| Median of redundant sensors | One faulty sensor cannot change the value. It also absorbs the outliers described on slide 17 |
+| Train only on dark or black-ice hours | The network is used only there, so that is the population it should learn |
+| Poisson loss with a log-rate output | The target is a count per hour. Poisson loss matches that, and the log output keeps predictions positive |
+| Small network (9→16→8→1) | 389 rows cannot support anything large |
+| Split by day | Hours of the same day are related. Splitting by day stops the same day leaking into training and test |
+| Repeated cross-validation | With one small test set, a good or bad score can be luck |
+| Constant baseline and GLM | A loss value means nothing alone. The network has to beat guessing the average |
+| Control experiment in the tests | Planted-signal data separates "the code is broken" from "the data has nothing to say" |
+| Features left out | Minute and second are noise. Noise (dB) follows traffic. Wind direction is circular and meaningless without wind. Licence plates are personal data |
+| Candidates 40 to 70 km/h | 80 km/h never occurs in dark or black-ice hours, so asking about it would be pure extrapolation |
+| PyTorch | The network, the loss and the training loop are explicit and can be explained line by line |
+| Streamlit | The GUI is short Python, which suits an MVP |
+| Local Ollama (`qwen3:8b`) | Already installed, free, no account, and no data leaves the machine |
+| Open-Meteo | The assignment requires an API. It needs no account, and only fixed Vienna coordinates are sent |
+| Guardrails around both AI parts | The lecture is clear that AI output cannot go straight to the user. Output must be one of a small set of legal values |
+| LLM prompt contains only numbers | Nothing from outside can be injected into the instructions |
+| Human in the loop | The operator sees flags and can override at any time, because software guardrails cannot be fully trusted |
+| Append-only decision log | Every published limit can be reconstructed afterwards |
+
+## 4. A decision with a known risk
+
+When no limit meets REQ1, the policy selects the limit with the lowest predicted near-accident rate. There is no constraint that a slower limit must be predicted as safer. The project owner chose this option.
+
+The risk is concrete. In the training data, lower limits coincide with more near-accidents (40 km/h: 1.86 per hour, 70 km/h: 1.13 per hour). That pattern is noise or confounding, but a network can learn it and then favour 70 km/h on an icy night. The system therefore shows "REQ1 not met", logs it and leaves the override with the operator. Before any real use, this should be replaced with a fixed expert limit or a monotonic constraint.
+
+If the network itself is unavailable, this rule cannot run. The cycle then proposes a fixed 60 km/h, the limit with the most evidence in dark or black-ice hours, and sets a review flag.
+
+## 5. Confidence levels
+
+Every neural-network and LLM result shows a level and the reasons for it. The Router and the Decider are deterministic, so they are labelled "rule, not a prediction".
+
+### Neural network
+
+Ten networks are trained with different seeds and on bootstrapped days. Their mean is the prediction. Their spread shows how much they disagree. For each candidate limit the GUI shows the predicted near-accidents per hour, the 90% range across networks, and the share of networks that put the rate at or below 1 per hour.
+
+The overall level is the lowest result of four checks:
+
+| Check | High | Medium | Low |
+|---|---|---|---|
+| Cross-validated skill vs. constant baseline | at least +5% | above 0 and below +5% | 0 or worse |
+| Ensemble agreement: width of 90% range divided by mean | up to 0.25 | up to 0.50 | above 0.50 |
+| Training hours at the chosen limit | at least 100 | 30 to 99 | below 30 |
+| Inputs inside the training range | yes | | no |
+
+**Why the minimum:** agreement between networks does not help if the networks never beat guessing. A level has to be earned on every check. Ensembles can also agree while being wrong, so skill measured on held-out days is the check that caps the rest.
+
+**Why it says rate and not hour:** near-accidents are random even when the true rate is known. The ensemble describes uncertainty about the rate. It cannot say how many near-accidents one particular hour will have.
+
+### LLM
+
+Each decision asks the local model 3 times with different seeds. The majority answer is used, and a tie takes the larger reduction.
+
+| Valid answers that agree | Level |
+|---|---|
+| 3 of 3 | High |
+| 2 of 3 | Medium |
+| No majority | Low |
+| No usable answer, rule-based fallback used | No confidence |
+
+**Why not ask the LLM how sure it is:** an LLM's statement about its own confidence is not calibrated. Agreement across repeated answers can be measured. It shows consistency and not correctness, and the GUI says so.
+
+## 6. Why the network has no skill
+
+Three independent observations point to the data and not to the code:
+
+1. Hourly near-accident counts have variance/mean = 1.00, which is what pure Poisson randomness looks like.
+2. Year N and Year N+1 have identical sensor inputs hour by hour, yet their near-accident counts in dark or black-ice hours do not correlate (r = 0.003). If conditions drove the counts, identical conditions would give similar counts.
+3. A linear model and gradient boosting do no better than a constant, so this is not specific to neural networks.
+
+The control experiment in `tests/test_model.py` shows that the same pipeline learns when a real signal exists.
+
+## 7. Requirements traceability
+
+| Requirement | Components | Tests |
+|---|---|---|
+| REQ1 | Router, FeatureBuilder, Predictor, WeatherPolicy | `test_router.py`, `test_features.py`, `test_model.py`, `test_weather_policy.py` |
+| REQ2 | AirQualityClient, LLMManager | `test_air_quality.py`, `test_llm_manager.py` |
+| REQ3 | SpeedLimitDecider | `test_decider.py` |
+| SPEC1, SPEC2 | Router, NormalAbnormal | `test_router.py`, `test_parameter_ranges.py` |
+| SPEC3 | Trainer, Predictor | `test_model.py` |
+| SPEC4 | NearAccidentLabeler | `test_labels.py` |
+| Data fit for use | DataCleaner, DataValidator | `test_data.py`, `test_validation.py` |
+| Regular operation | CycleOrchestrator, GUI | `test_cycle.py`, `test_app.py` |
+| Confidence shown | ConfidenceRater, WeatherPolicy, LLMManager | `test_confidence.py`, `test_cycle.py` |
+| Retraining decision | RetrainingAnalysis | `test_retraining.py` |
+| Allowed-to-use | All | `test_architecture.py` |
+
+## 8. Assumptions
+
+- Accident hours 1 to 24 correspond to sensor hours 0 to 23. The results are the same with other alignments.
+- Sensor 16 is traffic, and sensor 19 is a temperature sensor.
+- The wind unit `hm/h` in `SensorTypes` is a typo for km/h.
+- Near-accidents are recorded reliably, and real accidents (Damage or Injured) do not count as near-accidents, following SPEC4.
+- January is treated as representative, though it may well not be.
+- "Predicted" air quality in REQ2 uses the worst value in the next hours of the forecast.
+- The PM10 limit of 50 µg/m³ and the NO₂ limit of 200 µg/m³ come from EU Directive 2008/50/EC.
+
+## 9. Change requests (SpeedLimit21)
+
+| Change | What changes | Why that little |
+|---|---|---|
+| Some temperature sensors return Fahrenheit | Sensor mapping in `config.py` and a conversion in `data.py`; retrain if the training data changes | Only the cleaner knows raw units. Everything after it sees °C |
+| Only skidding counts as a near-accident | Call the labeler with `kinds=("SkidAngle",)`, then validate and retrain | The label definition is in one place |
+| Electric cars are exempt from air-quality limits | The Decider must return two limits, and the cycle, GUI and log must carry both, plus signs that can show two limits | The biggest change: "one limit for everyone" is an architectural assumption |
+
+## Results
+
+*Filled in after the training and retraining runs.*

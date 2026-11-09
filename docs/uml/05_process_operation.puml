@@ -1,0 +1,78 @@
+@startuml 05_process_operation
+title SpeedLimit: one operational cycle (BPMN-style swimlanes)
+skinparam shadowing false
+skinparam defaultFontSize 12
+skinparam ActivityDiamondBackgroundColor #FFF4D6
+
+|GUI / Scheduler|
+start
+:Timer fires or operator
+presses "Set limit now";
+:Collect readings with units;
+
+|InputGuardrail|
+if (Every value finite and in range?) then (no)
+  :Log rejected input,
+  keep the current limit; <<#FFDDDD>>
+  stop
+else (yes)
+  :Pass readings on;
+endif
+
+fork
+  |Router|
+  if (Dark or black ice?) then (no)
+    :No weather proposal;
+  else (yes)
+    |Ensemble Predictor|
+    :Predict near-accidents/h
+    for 40, 50, 60, 70 km/h;
+    |WeatherPolicy|
+    if (Any limit predicted <= 1/h?) then (yes)
+      :Take the highest such limit;
+    else (no)
+      :Take the lowest prediction,
+      flag "REQ1 not met";
+    endif
+    :Rate NN confidence with reasons;
+  endif
+fork again
+  |AirQualityClient|
+  :Get forecast or manual override
+  (PM10, NO2 in ug/m3);
+  |LLMManager|
+  if (Input guardrail passes?) then (no)
+    :No air proposal, review flag;
+  else (yes)
+    :Ask Ollama 3 times;
+    if (At least one valid answer?) then (yes)
+      :Majority reduction
+      (tie: larger reduction);
+      :Rate LLM confidence by agreement;
+    else (no)
+      :Labelled rule-based fallback,
+      review flag, no confidence;
+    endif
+  endif
+end fork
+
+|SpeedLimitDecider|
+if (Any proposal below 80 km/h?) then (yes)
+  :Use the strictest proposal;
+else (no)
+  :Use 80 km/h (REQ3);
+endif
+
+|Audit log|
+:Append limit, reasons, predictions
+and confidence to decisions.jsonl;
+
+|GUI / Scheduler|
+:Display limit in km/h, reasons
+and confidence;
+if (Operator overrides?) then (yes)
+  :Publish operator limit and log it;
+else (no)
+endif
+stop
+@enduml

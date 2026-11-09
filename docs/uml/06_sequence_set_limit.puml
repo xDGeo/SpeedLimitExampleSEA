@@ -1,0 +1,62 @@
+@startuml 06_sequence_set_limit
+title SpeedLimit: sequence of one cycle that sets the limit
+skinparam shadowing false
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign left
+hide footbox
+
+actor Operator
+participant "GUI /\nScheduler" as GUI
+participant "Cycle\nOrchestrator" as Cycle
+participant "Input\nGuardrail" as Guard
+participant Router
+participant "Feature\nBuilder" as Features
+participant "Ensemble\nPredictor" as NN
+participant "Weather\nPolicy" as Weather
+participant "AirQuality\nClient" as Air
+participant "LLM\nManager" as LLM
+participant "Ollama" as Ollama
+participant "Decider" as Decider
+database "decisions\n.jsonl" as Log
+
+Operator -> GUI : enter readings, press "Set limit now"\n(or auto-run timer fires)
+GUI -> Cycle : run(readings)
+Cycle -> Guard : validate_readings(readings)
+alt input invalid
+  Guard --> Cycle : InvalidReading
+  Cycle -> Log : append(rejected)
+  Cycle --> GUI : rejected, current limit kept
+else input valid
+  Guard --> Cycle : ok
+  Cycle -> Router : route(illuminance mlx, water um, temperature C)
+  Router --> Cycle : dark, black ice, use_nn
+  opt use_nn
+    Cycle -> Features : live_matrix(readings, 40/50/60/70)
+    Features --> Cycle : 4 feature rows
+    Cycle -> NN : predict_candidates(rows)
+    NN --> Cycle : mean, 90% range, P(rate <= 1/h)
+    Cycle -> Weather : choose_limit(predictions, skill, support, in range)
+    Weather --> Cycle : limit km/h, REQ1 flag, NN confidence
+  end
+  Cycle -> Air : get_forecast()
+  Air --> Cycle : worst PM10, NO2 (ug/m3)
+  Cycle -> LLM : decide(pm10, no2)
+  LLM -> LLM : input guardrail, cache lookup
+  loop 3 samples, different seeds
+    LLM -> Ollama : numbers + instructions
+    Ollama --> LLM : JSON reduction, reason
+    LLM -> LLM : output guardrail, gateway log
+  end
+  LLM --> Cycle : reduction km/h, LLM confidence\n(or fallback with review flag)
+  Cycle -> Decider : decide(proposals)
+  Decider --> Cycle : strictest limit (80 km/h if none)
+  Cycle -> Log : append(decision)
+  Cycle --> GUI : limit, reasons, confidence
+end
+GUI --> Operator : show limit in km/h and why
+opt operator disagrees
+  Operator -> GUI : choose override limit
+  GUI -> Cycle : apply_override(limit)
+  Cycle -> Log : append(override)
+end
+@enduml

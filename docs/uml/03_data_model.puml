@@ -1,0 +1,72 @@
+@startuml 03_data_model
+title SpeedLimit: structure of the provided data
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+class SENSOR_TYPE {
+  SensorTypeCode: Text
+  Type: Text
+  Unit: Text
+  Min: Number
+  Max: Number
+}
+
+class SENSOR {
+  SensorID: Integer
+  SensorTypeCode: Text
+}
+
+class SENSOR_READING {
+  Month: Integer
+  Day: Integer
+  Hour: Integer (0..23)
+  Minute: Integer
+  Second: Integer
+  Sensor: Integer
+  Value: Decimal comma
+}
+
+class SPEED_LIMIT_READING {
+  Sensor = -1
+  Value: km/h in {40,50,60,70,80}
+}
+
+class ACCIDENT_RECORD {
+  Month: Integer
+  Day: Integer
+  Hour: Integer (1..24)
+  Second: Integer
+  LicencePlate: Text (dropped at load)
+}
+
+class ACCIDENT {
+  Damage: Euro
+  Injured: Number of people
+}
+
+class NEAR_ACCIDENT {
+  CloseCarCm: cm
+  CloseGuardrailCm: cm
+  SkidAngle: degrees
+}
+
+SENSOR_TYPE "1" -- "1..*" SENSOR : describes >
+SENSOR "1" -- "1..*" SENSOR_READING : produces >
+SENSOR_READING <|-- SPEED_LIMIT_READING
+ACCIDENT_RECORD <|-- ACCIDENT
+ACCIDENT_RECORD <|-- NEAR_ACCIDENT
+ACCIDENT_RECORD .. SENSOR_READING : joined by day and hour only
+
+note right of SENSOR_TYPE
+  Code T is used twice
+  (temperature and traffic).
+  Sensor 16 is traffic.
+end note
+
+note left of SENSOR
+  Sensor 19 has readings but no row here.
+  Sensors 7, 10, 17 have no readings.
+end note
+@enduml

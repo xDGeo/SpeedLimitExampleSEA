@@ -1,0 +1,47 @@
+@startuml 01_architecture_training
+title SpeedLimit: training stage, components and allowed-to-use specification
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam nodesep 40
+skinparam ranksep 70
+skinparam defaultFontSize 12
+skinparam ArrowColor #444444
+
+[train.py\nTrainingRunner] as Train
+[analyze_data.py\nDataAnalyst] as Analyze
+[check_retraining.py\nRetrainingCheck] as RetrainCli
+[core.retraining\nRetrainingAnalysis] as Retraining
+[core.data\nDataLoader + DataCleaner] as Data
+[core.validation\nDataValidator (gate)] as Validation
+[core.labels\nNearAccidentLabeler] as Labels
+[core.features\nFeatureBuilder] as Features
+[core.model\nEnsembleTrainer + Predictor] as Model
+[core.router\nRouter] as Router
+[core.parameter_ranges\nNormalAbnormal] as Ranges
+database "data/*.csv" as CSV
+database "artifacts/\nmodel.pt, reports" as Art
+
+Analyze ..> Data : <<use>>
+Analyze ..> Validation : <<use>>
+Analyze ..> Labels : <<use>>
+Analyze ..> Ranges : <<use>>
+Train ..> Data : <<use>>
+Train ..> Validation : <<use>>
+Train ..> Labels : <<use>>
+Train ..> Features : <<use>>
+Train ..> Model : <<use>>
+RetrainCli ..> Retraining : <<use>>
+Retraining ..> Data : <<use>>
+Retraining ..> Labels : <<use>>
+Retraining ..> Features : <<use>>
+Retraining ..> Model : <<use>>
+Features ..> Router : <<use>>
+Data ..> CSV : reads
+Model ..> Art : writes
+
+note bottom of Router
+  Every core module may use core.config.
+  Those arrows are omitted for readability.
+  tests/test_architecture.py enforces this diagram.
+end note
+@enduml
