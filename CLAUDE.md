@@ -12,7 +12,7 @@ Use the project environment. System Python is 3.15 and has no PyTorch.
 .venv/bin/python analyze_data.py              # clean, validate, plots, parameter ranges
 .venv/bin/python train.py                     # stops if validation fails
 .venv/bin/python check_retraining.py          # Year N+1 analysis
-.venv/bin/streamlit run app.py                # GUI
+.venv/bin/python -m streamlit run app.py      # GUI, add --server.address localhost
 plantuml -tpng docs/uml/*.puml                # render diagrams
 ```
 

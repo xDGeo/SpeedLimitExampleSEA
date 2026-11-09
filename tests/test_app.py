@@ -2,7 +2,7 @@ from pathlib import Path
 
 from streamlit.testing.v1 import AppTest
 
-from core import cycle
+from core import cycle, llm_manager
 from tests.test_cycle import FakeAir, FakeLLM, FakePredictor
 
 
@@ -105,3 +105,18 @@ def test_history_has_units(tmp_path):
     set_day(at)
     press(at)
     assert any("km/h" in " ".join(map(str, df.value.columns)) for df in at.dataframe)
+
+
+def test_ollama_unreachable_shows_labelled_fallback(tmp_path):
+    backend = llm_manager.OllamaBackend(url="http://localhost:1", timeout=1)
+    manager = llm_manager.LLMManager(backend, log_path=tmp_path / "llm.jsonl")
+    at = launch(tmp_path, llm=manager)
+    set_day(at)
+    press(at)
+    text = all_text(at)
+    result = at.session_state["last_result"]
+    assert result.air.source == "rule-based fallback"
+    assert result.review
+    assert "No confidence" in text
+    assert "rule-based" in text
+    assert "Operator review needed" in text

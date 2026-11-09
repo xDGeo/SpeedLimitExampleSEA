@@ -21,6 +21,7 @@ SCENARIOS = {
     "Icy night": {"illuminance_lux": 0.1, "water_um": 2000.0, "temperature_c": -8.0},
 }
 LEVEL_ICON = {"High": "🟢", "Medium": "🟡", "Low": "🔴", "No confidence": "⚫", "Rule, not a prediction": "⚙️"}
+SCHEDULER_POLL_S = 2
 BADGE = {"Normal": "🟢 Normal", "Abnormal": "🟠 Abnormal", "Unknown": "⚪ Unknown"}
 
 state = st.session_state
@@ -48,8 +49,7 @@ def air_override():
 
 
 def run_cycle(source: str):
-    with st.spinner("Asking the local LLM about air quality..."):
-        state["last_result"] = system.run(current_readings(), air_override=air_override(), source=source)
+    state["last_result"] = system.run(current_readings(), air_override=air_override(), source=source)
 
 
 def read_history(limit=15) -> pd.DataFrame:
@@ -133,18 +133,13 @@ def show_result(result):
         st.caption(f"Reductions sampled: {answers}. Source: {result.air.source}.")
 
 
-@st.fragment(run_every=(max(state.get("interval_s", 3600), 5) if state.get("auto_run") else None))
+@st.fragment(run_every=(SCHEDULER_POLL_S if state.get("auto_run") else None))
 def scheduler():
-    if not state.get("auto_run"):
-        st.caption("Auto-run is off.")
-        return
-    interval = max(state.get("interval_s", 3600), 5)
-    now = time.time()
-    if now - state["last_auto_run"] >= interval:
-        state["last_auto_run"] = now
+    """Polls often and asks whether a cycle is due, so a slightly early tick cannot skip one."""
+    if state.get("auto_run") and cycle.cycle_due(time.time(), state["last_auto_run"], state["interval_s"]):
+        state["last_auto_run"] = time.time()
         run_cycle("scheduler")
         st.rerun(scope="app")
-    st.caption(f"Next automatic cycle in about {max(0, int(interval - (now - state['last_auto_run'])))} s.")
 
 
 st.title("SpeedLimit control")
@@ -153,8 +148,8 @@ st.caption("Sets the limit from light, weather and air quality. An MVP for a cas
 skill = getattr(getattr(system, "predictor", None), "meta", {}).get("skill_pct") if system.predictor else None
 if system.predictor is None:
     st.error("No trained model found. Run train.py. Until then, dark or icy conditions use a fixed 60 km/h.")
-elif skill is not None and skill <= 0:
-    st.warning(f"Model warning: in testing the neural network does not beat guessing the average "
+elif skill is not None and skill < config.SKILL_MEANINGFUL_PCT:
+    st.warning(f"Model warning: in testing the neural network does not meaningfully beat guessing the average "
                f"(skill {skill:+.1f}%). Treat its limits as advisory.")
 
 bands = ranges.load_bands()
@@ -162,9 +157,10 @@ inputs, decision = st.columns([1, 1.5], gap="large")
 
 with inputs:
     st.subheader("Conditions")
-    scenario_columns = st.columns(len(SCENARIOS))
-    for column, name in zip(scenario_columns, SCENARIOS):
-        column.button(name, on_click=apply_scenario, args=(name,), key=f"scenario_{name}")
+    scenario_columns = st.columns(2)
+    for index, name in enumerate(SCENARIOS):
+        scenario_columns[index % 2].button(name, on_click=apply_scenario, args=(name,),
+                                           key=f"scenario_{name}", use_container_width=True)
     readings_now = current_readings()
     number("illuminance_lux", 100.0, "%.3f", {}, bands)
     number("water_um", 100.0, "%.1f", {"temperature_c": readings_now["temperature_c"]}, bands)
@@ -184,19 +180,21 @@ with inputs:
         st.caption("Uses the Open-Meteo forecast for Vienna: the worst PM10 and NO₂ (µg/m³) of the next "
                    f"{config.FORECAST_HOURS} hours.")
 
-    pressed = st.button("Set limit now", key="set_limit", type="primary")
-
     st.subheader("Regular operation")
     st.toggle("Auto-run on a timer", key="auto_run")
     state.setdefault("interval_s", 3600)
-    st.number_input("Interval (seconds, 3600 = hourly)", key="interval_s", min_value=5, step=5)
+    st.number_input("Interval (seconds, 3600 = hourly)", key="interval_s", min_value=config.MIN_INTERVAL_S, step=5)
+    if state.get("auto_run"):
+        st.caption(f"Auto-run is on: a new cycle about every {state['interval_s']} s while this page stays open.")
+    else:
+        st.caption("Auto-run is off.")
     scheduler()
-
-if pressed:
-    run_cycle("manual")
 
 with decision:
     st.subheader("Decision")
+    if st.button("Set limit now", key="set_limit", type="primary"):
+        with st.spinner("Asking the local LLM about air quality..."):
+            run_cycle("manual")
     show_result(state["last_result"])
 
     st.subheader("Operator override")

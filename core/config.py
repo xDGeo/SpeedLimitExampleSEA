@@ -96,8 +96,11 @@ OLLAMA_MODEL = "qwen3:8b"
 OLLAMA_TIMEOUT_S = 90.0
 LLM_SAMPLES = 3
 
+MIN_INTERVAL_S = 5
+
 # Confidence thresholds
 SKILL_HIGH_PCT = 5.0
+SKILL_MEANINGFUL_PCT = 2.0  # cross-validation folds differ by several points, so less is noise
 AGREEMENT_HIGH_WIDTH = 0.25
 AGREEMENT_MEDIUM_WIDTH = 0.50
 SUPPORT_HIGH_HOURS = 100

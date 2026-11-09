@@ -47,7 +47,7 @@ class SpeedLimitCycle:
             reason = (f"Neural network unavailable ({error}). Using the fixed limit of "
                       f"{config.NN_FAILURE_LIMIT} km/h")
             return None, Proposal(config.NN_FAILURE_LIMIT, "weather", reason, review=True)
-        return weather, Proposal(weather.limit_kmh, "weather", weather.reason)
+        return weather, Proposal(weather.limit_kmh, "weather", weather.reason, review=not weather.req1_met)
 
     def _air_proposal(self, override):
         try:
@@ -113,6 +113,10 @@ class SpeedLimitCycle:
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.log_path, "a", encoding="utf-8") as handle:
             handle.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
+
+
+def cycle_due(now: float, last_run: float, interval_s: float) -> bool:
+    return now - last_run >= max(interval_s, config.MIN_INTERVAL_S)
 
 
 def build_default_cycle() -> SpeedLimitCycle:

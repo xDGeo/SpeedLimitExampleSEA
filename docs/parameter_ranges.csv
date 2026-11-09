@@ -1,0 +1,9 @@
+﻿Parameter,Unit,Allowed range,Normal,Abnormal,Basis,Type
+Illuminance,lux,0 to 1e+06 lux,at least 0.5 lux,below 0.5 lux (dark),SPEC1 (500 millilux),Rule: changes the limit
+Water on road,µm,0 to 10000 µm,"at most 1000 µm, or any amount at 0 °C or warmer",above 1000 µm while below 0 °C (black ice),SPEC2,Rule: changes the limit
+Temperature,°C,-30 to 70 °C,"0 °C or warmer, or colder with at most 1000 µm of water",below 0 °C with more than 1000 µm of water (black ice),SPEC2,Rule: changes the limit
+Wind strength,km/h,0 to 300 km/h,0 to 75.2 km/h,below 0 or above 75.2 km/h,Data only (January); does not change the limit,Data band: informational only
+Humidity,%,0 to 100 %,72 to 97 %,below 72 or above 97 %,Data only (January); does not change the limit,Data band: informational only
+Traffic,cars/s,0 to 50 cars/s,3.5 to 29 cars/s,below 3.5 or above 29 cars/s,Data only (January); does not change the limit,Data band: informational only
+PM10,µg/m³,0 to 2000 µg/m³,at most 50 µg/m³,above 50 µg/m³,"EU daily limit, Directive 2008/50/EC",Rule: changes the limit
+NO₂,µg/m³,0 to 2000 µg/m³,at most 200 µg/m³,above 200 µg/m³,"EU hourly limit, Directive 2008/50/EC",Rule: changes the limit

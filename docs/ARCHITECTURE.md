@@ -93,7 +93,7 @@ Accidents have no link to sensors. They are joined by day and hour only, which i
 | Features left out | Minute and second are noise. Noise (dB) follows traffic. Wind direction is circular and meaningless without wind. Licence plates are personal data |
 | Candidates 40 to 70 km/h | 80 km/h never occurs in dark or black-ice hours, so asking about it would be pure extrapolation |
 | PyTorch | The network, the loss and the training loop are explicit and can be explained line by line |
-| Streamlit | The GUI is short Python, which suits an MVP |
+| Streamlit | The GUI is short Python, which suits an MVP. It is bound to localhost |
 | Local Ollama (`qwen3:8b`) | Already installed, free, no account, and no data leaves the machine |
 | Open-Meteo | The assignment requires an API. It needs no account, and only fixed Vienna coordinates are sent |
 | Guardrails around both AI parts | The lecture is clear that AI output cannot go straight to the user. Output must be one of a small set of legal values |
@@ -105,7 +105,7 @@ Accidents have no link to sensors. They are joined by day and hour only, which i
 
 When no limit meets REQ1, the policy selects the limit with the lowest predicted near-accident rate. There is no constraint that a slower limit must be predicted as safer. The project owner chose this option.
 
-The risk is concrete. In the training data, lower limits coincide with more near-accidents (40 km/h: 1.86 per hour, 70 km/h: 1.13 per hour). That pattern is noise or confounding, but a network can learn it and then favour 70 km/h on an icy night. The system therefore shows "REQ1 not met", logs it and leaves the override with the operator. Before any real use, this should be replaced with a fixed expert limit or a monotonic constraint.
+The risk is concrete. In the training data, lower limits coincide with more near-accidents (40 km/h: 1.86 per hour, 70 km/h: 1.13 per hour). That pattern is noise or confounding, but a network can learn it and then favour 70 km/h on an icy night. The system therefore shows "REQ1 not met", requests operator review, logs it and leaves the override with the operator. The replay in [Results](#results) shows this risk is real. Before any real use, this should be replaced with a fixed expert limit or a monotonic constraint.
 
 If the network itself is unavailable, this rule cannot run. The cycle then proposes a fixed 60 km/h, the limit with the most evidence in dark or black-ice hours, and sets a review flag.
 
@@ -121,10 +121,12 @@ The overall level is the lowest result of four checks:
 
 | Check | High | Medium | Low |
 |---|---|---|---|
-| Cross-validated skill vs. constant baseline | at least +5% | above 0 and below +5% | 0 or worse |
+| Cross-validated skill vs. constant baseline | at least +5% | +2% up to +5% | below +2% |
 | Ensemble agreement: width of 90% range divided by mean | up to 0.25 | up to 0.50 | above 0.50 |
 | Training hours at the chosen limit | at least 100 | 30 to 99 | below 30 |
 | Inputs inside the training range | yes | | no |
+
+A skill below +2% counts as no skill, because cross-validation folds differ from each other by several points.
 
 **Why the minimum:** agreement between networks does not help if the networks never beat guessing. A level has to be earned on every check. Ensembles can also agree while being wrong, so skill measured on held-out days is the check that caps the rest.
 
@@ -189,4 +191,61 @@ The control experiment in `tests/test_model.py` shows that the same pipeline lea
 
 ## Results
 
-*Filled in after the training and retraining runs.*
+Measured on the real data with the committed model. Reports are in `artifacts/`.
+
+### Data
+
+The cleaned table passes every hard validation check: 744 complete hours, no missing or out-of-range values, labels reconciled with the source (964 near-accidents), and redundant sensors agreeing (lowest correlation 0.995). See [DATA_QUALITY.md](DATA_QUALITY.md).
+
+### Neural network
+
+| Measure, 389 dark or black-ice hours | Network | Constant baseline | GLM |
+|---|---|---|---|
+| Poisson deviance on test days 27 to 31 | 0.982 | 0.999 | 0.978 |
+
+| Measure | Value |
+|---|---|
+| Skill on the single test split | +1.7% |
+| **Cross-validated skill, 20 folds grouped by day** | **+0.4%** (best fold +4.7%, worst -3.2%) |
+| Best epoch per network | 1 to 8, because validation loss stops improving almost at once |
+| Predictions on test days | Only 1.18 to 1.36 near-accidents/h |
+| 90% predictive coverage on test days | 97%, somewhat wider than necessary |
+
+The +1.7% on one split shows why a single split cannot be trusted. Across 20 folds the result is within noise, so the system treats it as no skill and caps confidence at Low. The network also scores a little worse than the simple GLM on the test split.
+
+The control experiment in `tests/test_model.py` confirms that the same code learns when a real signal exists.
+
+### What the policy does
+
+Replaying all 389 dark or black-ice hours of Year N:
+
+| Result | Value |
+|---|---|
+| Hours where a limit met REQ1 (at most 1 predicted near-accident/h) | **0 of 389** |
+| Limit chosen | **70 km/h in all 389 hours** |
+| Neural-network confidence | Low in all 389 hours |
+
+This is the risk from section 4 happening in practice. The network picked up the backwards pattern (slower limits coincide with more near-accidents), so the "lowest prediction" rule always picks the fastest candidate. On this data the weather path therefore only ever reduces the limit by 10 km/h. It is an honest output of the agreed rule, and it is not a safe policy.
+
+### LLM
+
+The local model stayed within the expected ranges in all 5 golden test cases. For PM10 120 and NO₂ 250 µg/m³, all 3 samples chose a 30 km/h reduction. For the live forecast of PM10 35.2 and NO₂ 18.3 µg/m³, all 3 chose no reduction.
+
+### Retraining
+
+| Check | Result |
+|---|---|
+| Sensor inputs Year N+1 vs. Year N | Identical (largest KS statistic 0.0) |
+| Near-accidents | 964 to 822, down 15% (p = 0.0008) |
+| Year N model on Year N+1 | Skill -0.5% against the Year N average |
+| Model retrained on Year N+1 | Cross-validated skill -1.1% |
+
+**Decision: do not retrain yet. Clarify the data first.** A full year of sensor readings cannot be identical to the previous one, so the file may be a copy. If it is genuine, retraining would adjust only the base rate and add no predictive skill.
+
+### What should change before real use
+
+1. Find out why the Year N+1 sensor file is identical to Year N.
+2. Collect data for a full year and more road sections.
+3. Vary limits in a controlled trial, so cause and effect can be separated.
+4. Measure near-accidents per 1000 cars instead of raw counts.
+5. Replace "lowest prediction" with fixed expert limits or a monotonic constraint.

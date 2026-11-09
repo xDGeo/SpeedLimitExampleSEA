@@ -1,0 +1,64 @@
+{
+  "inputs_identical": true,
+  "input_drift": {
+    "per_sensor_ks": {
+      "-1": 0.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 0.0,
+      "5": 0.0,
+      "6": 0.0,
+      "8": 0.0,
+      "9": 0.0,
+      "11": 0.0,
+      "12": 0.0,
+      "13": 0.0,
+      "14": 0.0,
+      "15": 0.0,
+      "16": 0.0,
+      "18": 0.0,
+      "19": 0.0
+    },
+    "max_ks": 0.0,
+    "drifted_sensors": []
+  },
+  "near_accident_rate": {
+    "count_first": 964,
+    "count_second": 822,
+    "z": 3.3600645223901373,
+    "p_value": 0.0007792427140361725
+  },
+  "dark_or_ice_rate_per_hour": {
+    "year_n": 1.2647814910025708,
+    "year_n_plus_1": 1.056555269922879
+  },
+  "frozen_model_on_year_n_plus_1": {
+    "poisson_deviance": 1.2503935874800685,
+    "mae": 0.9043733849929967,
+    "mse": 1.137646241512818
+  },
+  "year_n_mean_as_constant_on_year_n_plus_1": {
+    "poisson_deviance": 1.2446052396430771,
+    "mae": 0.9000006608468091,
+    "mse": 1.130133953648205
+  },
+  "frozen_skill_pct": -0.46507500150418934,
+  "retrained_cv": {
+    "skill_pct": -1.0703797153917005,
+    "model_deviance": 1.227315501924553,
+    "baseline_deviance": 1.214317691672478,
+    "folds": 10,
+    "best_fold_skill_pct": 1.316134163936733,
+    "worst_fold_skill_pct": -4.300157343609046
+  },
+  "retrained_gain_points": -0.6053047138875112,
+  "recommendation": {
+    "decision": "Do not retrain yet: clarify the data",
+    "reasons": [
+      "Year N+1 sensor readings are identical to Year N, which is not plausible for a real year",
+      "Near-accidents changed (p = 0.0008) while the inputs did not",
+      "Retraining on a possibly wrong file would only adjust the base rate"
+    ]
+  }
+}

@@ -25,6 +25,7 @@ Analyze ..> Data : <<use>>
 Analyze ..> Validation : <<use>>
 Analyze ..> Labels : <<use>>
 Analyze ..> Ranges : <<use>>
+Analyze ..> Features : <<use>>
 Train ..> Data : <<use>>
 Train ..> Validation : <<use>>
 Train ..> Labels : <<use>>

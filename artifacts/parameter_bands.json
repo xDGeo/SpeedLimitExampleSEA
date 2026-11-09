@@ -1,0 +1,14 @@
+{
+  "wind_strength_kmh": [
+    0.0,
+    75.2
+  ],
+  "humidity_pct": [
+    72.0,
+    97.0
+  ],
+  "traffic_cars_s": [
+    3.5,
+    29.0
+  ]
+}

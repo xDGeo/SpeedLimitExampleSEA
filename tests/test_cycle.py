@@ -77,6 +77,16 @@ def test_dark_uses_network(tmp_path):
     assert result.weather.confidence.level == "Low"
 
 
+def test_req1_not_met_requests_operator_review(tmp_path):
+    assert build(tmp_path).run(NIGHT_READINGS).review
+
+
+def test_req1_met_needs_no_review(tmp_path):
+    predictor = FakePredictor(means=(0.5, 0.6, 0.7, 0.9))
+    result = build(tmp_path, predictor=predictor).run(NIGHT_READINGS)
+    assert result.req1_met and not result.review
+
+
 def test_daylight_black_ice_uses_network(tmp_path):
     result = build(tmp_path).run({**DAY_READINGS, "water_um": 1001, "temperature_c": -1})
     assert result.route.black_ice and result.weather is not None
@@ -160,3 +170,20 @@ def test_override_published_and_logged(tmp_path):
 def test_override_must_be_legal(tmp_path):
     with pytest.raises(ValueError):
         build(tmp_path).apply_override(55)
+
+
+def test_first_scheduled_cycle_is_due_immediately():
+    assert cycle.cycle_due(now=1_800_000_000.0, last_run=0.0, interval_s=3600)
+
+
+def test_not_due_before_the_interval():
+    assert not cycle.cycle_due(now=1000.0, last_run=900.0, interval_s=3600)
+
+
+def test_due_exactly_at_the_interval():
+    assert cycle.cycle_due(now=4600.0, last_run=1000.0, interval_s=3600)
+
+
+def test_minimum_interval_is_enforced():
+    assert not cycle.cycle_due(now=1002.0, last_run=1000.0, interval_s=1)
+    assert cycle.cycle_due(now=1005.0, last_run=1000.0, interval_s=1)

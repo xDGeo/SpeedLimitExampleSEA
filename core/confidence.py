@@ -20,8 +20,8 @@ class Confidence:
 
 
 def _skill_check(skill_pct):
-    if skill_pct <= 0:
-        return LOW, f"Low: does not beat guessing the average in testing (skill {skill_pct:+.1f}%)"
+    if skill_pct < config.SKILL_MEANINGFUL_PCT:
+        return LOW, f"Low: does not meaningfully beat guessing the average in testing (skill {skill_pct:+.1f}%)"
     if skill_pct < config.SKILL_HIGH_PCT:
         return MEDIUM, f"Medium: only slightly better than guessing the average (skill {skill_pct:+.1f}%)"
     return HIGH, f"High: clearly better than guessing the average in testing (skill {skill_pct:+.1f}%)"

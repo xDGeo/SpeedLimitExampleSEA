@@ -1,0 +1,77 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "complete_hours",
+      "passed": true,
+      "severity": "hard",
+      "detail": "744 of 744 hours"
+    },
+    {
+      "name": "unique_hours",
+      "passed": true,
+      "severity": "hard",
+      "detail": "0 duplicated hours"
+    },
+    {
+      "name": "no_missing_values",
+      "passed": true,
+      "severity": "hard",
+      "detail": "0 missing values"
+    },
+    {
+      "name": "values_in_range",
+      "passed": true,
+      "severity": "hard",
+      "detail": "Out of range: none"
+    },
+    {
+      "name": "legal_speed_limits",
+      "passed": true,
+      "severity": "hard",
+      "detail": "0 hours with an illegal limit (km/h)"
+    },
+    {
+      "name": "no_personal_data",
+      "passed": true,
+      "severity": "hard",
+      "detail": "Personal columns: none"
+    },
+    {
+      "name": "labels_valid",
+      "passed": true,
+      "severity": "hard",
+      "detail": "0 negative near-accident counts"
+    },
+    {
+      "name": "labels_reconcile",
+      "passed": true,
+      "severity": "hard",
+      "detail": "964 near-accidents in the table, 964 in the source file"
+    },
+    {
+      "name": "redundant_sensors_agree",
+      "passed": true,
+      "severity": "hard",
+      "detail": "Lowest correlation between redundant sensors: 0.995"
+    },
+    {
+      "name": "only_january",
+      "passed": false,
+      "severity": "warning",
+      "detail": "All readings are from January, so other seasons are unknown"
+    },
+    {
+      "name": "support_per_limit",
+      "passed": false,
+      "severity": "warning",
+      "detail": "Limits with under 30 hours: {40: 7}"
+    },
+    {
+      "name": "years_differ",
+      "passed": false,
+      "severity": "warning",
+      "detail": "Year N+1 sensor readings are identical to Year N"
+    }
+  ]
+}

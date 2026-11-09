@@ -13,6 +13,12 @@ def test_no_skill_caps_at_low():
     assert any("guessing the average" in reason for reason in result.reasons)
 
 
+def test_skill_within_noise_counts_as_no_skill():
+    result = c.nn_confidence(**{**GOOD, "skill_pct": 0.4})
+    assert result.level == "Low"
+    assert any("guessing the average" in reason for reason in result.reasons)
+
+
 def test_small_positive_skill_caps_at_medium():
     assert c.nn_confidence(**{**GOOD, "skill_pct": 2.0}).level == "Medium"
 
