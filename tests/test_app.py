@@ -120,3 +120,33 @@ def test_ollama_unreachable_shows_labelled_fallback(tmp_path):
     assert "No confidence" in text
     assert "rule-based" in text
     assert "Operator review needed" in text
+
+
+def test_research_panel_sits_beside_the_decision(tmp_path):
+    at = launch(tmp_path)
+    at.number_input(key="illuminance_lux").set_value(5000.0)
+    at.number_input(key="water_um").set_value(1500.0)
+    at.number_input(key="temperature_c").set_value(-3.0)
+    press(at)
+    text = all_text(at)
+    assert at.session_state["last_result"].limit_kmh == 60
+    assert any(item.value == "Research suggests" for item in at.subheader)
+    assert "50 km/h" in text
+    assert "not used to set" in text
+    assert "Stopping-distance evidence" in text
+    assert "Crash-effect evidence" in text
+    assert "https://" in text
+
+
+def test_research_table_has_units(tmp_path):
+    at = launch(tmp_path)
+    set_day(at)
+    press(at)
+    columns = " ".join(" ".join(map(str, frame.value.columns)) for frame in at.dataframe)
+    assert "Stopping distance (m)" in columns
+    assert "Injury crashes (%)" in columns
+
+
+def test_research_panel_waits_for_a_decision(tmp_path):
+    at = launch(tmp_path)
+    assert "Press Set limit now to see what research suggests" in all_text(at)

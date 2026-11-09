@@ -19,9 +19,10 @@ ALLOWED = {
     "features": {"config", "router"},
     "weather_policy": {"config", "confidence"},
     "llm_manager": {"config", "confidence"},
+    "research_advisor": {"config", "confidence", "router"},
     "retraining": {"config", "data", "labels", "features", "model"},
     "cycle": {"config", "parameter_ranges", "router", "features", "model", "confidence",
-              "weather_policy", "air_quality", "llm_manager", "decider"},
+              "weather_policy", "air_quality", "llm_manager", "decider", "research_advisor"},
 }
 
 

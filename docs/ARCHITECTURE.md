@@ -42,6 +42,7 @@ An architecture is its components plus the allowed-to-use specification. Both ar
 | CycleOrchestrator | `core/cycle.py` | Runs one full decision in fixed order and writes the audit record |
 | GUI + Scheduler | `app.py` | Lets the operator enter readings, run on a timer, see reasons and override |
 | RetrainingAnalysis | `core/retraining.py` | Compares Year N+1 with the trained model and recommends what to do |
+| ResearchAdvisor | `core/research_advisor.py` | Shows what published research suggests beside the system limit, as explicit cited formulas, and never sets the limit |
 | SyntheticDataExperiment | `synthetic_experiment.py` | Tests whether generated data improves the model on real held-out days, without changing the production model |
 
 ### How the components cooperate

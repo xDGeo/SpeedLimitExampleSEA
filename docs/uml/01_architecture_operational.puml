@@ -18,6 +18,7 @@ skinparam ArrowColor #444444
 [core.llm_manager\nLLMManager: guardrails + gateway] as LLM
 [core.decider\nSpeedLimitDecider] as Decider
 [core.confidence\nConfidenceRater] as Confidence
+[core.research_advisor\nResearchAdvisor (advisory only)] as Research
 cloud "Open-Meteo API" as OpenMeteo
 cloud "Local Ollama\nqwen3:8b" as Ollama
 database "artifacts/\ndecisions.jsonl\nllm_calls.jsonl" as Art
@@ -33,6 +34,9 @@ Cycle ..> Air : <<use>>
 Cycle ..> LLM : <<use>>
 Cycle ..> Decider : <<use>>
 Features ..> Router : <<use>>
+Cycle ..> Research : <<use>>
+Research ..> Router : <<use>>
+Research ..> Confidence : <<use>>
 Weather ..> Confidence : <<use>>
 LLM ..> Confidence : <<use>>
 Air ..> OpenMeteo : <<use>>

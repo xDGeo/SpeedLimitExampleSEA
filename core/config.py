@@ -106,6 +106,20 @@ AGREEMENT_MEDIUM_WIDTH = 0.50
 SUPPORT_HIGH_HOURS = 100
 SUPPORT_MEDIUM_HOURS = 30
 
+# Research advisor. Sources and read-status: reports/Speed limit advisor evidence.md
+RESEARCH_REACTION_S = 2.5
+RESEARCH_FRICTION = {"dry": 0.8, "wet": 0.7, "black ice": 0.15}
+RESEARCH_ICE_STRESS_FRICTION = 0.08
+RESEARCH_DARK_DISTANCE_M = 91.0   # AAA 2015, halogen low beam, an upper bound
+RESEARCH_DAY_DISTANCE_M = 128.0   # AASHTO stopping distance at 80 km/h, used as a proxy
+RESEARCH_COMPLIANCE = 0.25        # share of a posted cut that reaches mean speed
+RESEARCH_COMPLIANCE_LOW = 0.17
+RESEARCH_COMPLIANCE_HIGH = 0.55
+RESEARCH_BETA_INJURY = 0.034      # Exponential Model, injury accidents per km/h
+RESEARCH_BETA_INJURY_STRESS = 0.06
+RESEARCH_BETA_KILLED = 0.065      # Exponential Model, people killed per km/h
+RESEARCH_BETA_KILLED_STRESS = 0.08
+
 # Retraining
 KS_DRIFT_THRESHOLD = 0.1
 RETRAIN_GAIN_PCT = 5.0

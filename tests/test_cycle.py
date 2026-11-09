@@ -187,3 +187,26 @@ def test_due_exactly_at_the_interval():
 def test_minimum_interval_is_enforced():
     assert not cycle.cycle_due(now=1002.0, last_run=1000.0, interval_s=1)
     assert cycle.cycle_due(now=1005.0, last_run=1000.0, interval_s=1)
+
+
+def test_research_advice_is_attached(tmp_path):
+    result = build(tmp_path).run({**DAY_READINGS, "water_um": 1500, "temperature_c": -3})
+    assert result.research.limit_kmh == 50
+    assert result.research.surface == "black ice"
+
+
+def test_research_never_changes_the_published_limit(tmp_path):
+    result = build(tmp_path).run({**DAY_READINGS, "water_um": 1500, "temperature_c": -3})
+    assert result.limit_kmh == 60
+    assert result.research.limit_kmh == 50
+
+
+def test_research_is_logged(tmp_path):
+    build(tmp_path).run(NIGHT_READINGS)
+    record = log_lines(tmp_path)[0]["research"]
+    assert record["limit_kmh"] == 80
+    assert record["stopping_evidence"]["level"] == "Low"
+
+
+def test_rejected_input_has_no_research(tmp_path):
+    assert build(tmp_path).run({**DAY_READINGS, "humidity_pct": -1}).research is None

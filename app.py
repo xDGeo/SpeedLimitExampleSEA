@@ -20,7 +20,8 @@ SCENARIOS = {
     "Black ice in daylight": {"illuminance_lux": 5000.0, "water_um": 1500.0, "temperature_c": -3.0},
     "Icy night": {"illuminance_lux": 0.1, "water_um": 2000.0, "temperature_c": -8.0},
 }
-LEVEL_ICON = {"High": "🟢", "Medium": "🟡", "Low": "🔴", "No confidence": "⚫", "Rule, not a prediction": "⚙️"}
+LEVEL_ICON = {"High": "🟢", "Medium": "🟡", "Low": "🔴", "No confidence": "⚫", "Rule, not a prediction": "⚙️",
+              "Not applicable": "➖"}
 SCHEDULER_POLL_S = 2
 BADGE = {"Normal": "🟢 Normal", "Abnormal": "🟠 Abnormal", "Unknown": "⚪ Unknown"}
 
@@ -133,6 +134,40 @@ def show_result(result):
         st.caption(f"Reductions sampled: {answers}. Source: {result.air.source}.")
 
 
+def _pct(central, low, high) -> str:
+    return f"{central:+.1f} ({low:+.1f} to {high:+.1f})" if central else "0"
+
+
+def show_research(result):
+    st.subheader("Research suggests")
+    advice = result.research if result else None
+    if advice is None:
+        st.caption("Press Set limit now to see what research suggests for these conditions.")
+        return
+    st.metric("Published research", f"{advice.limit_kmh} km/h")
+    st.caption(f"System limit: {result.limit_kmh} km/h. This research estimate is not used to set it.")
+    for reason in advice.reasons:
+        st.markdown(f"- {reason}")
+    show_confidence("Stopping-distance evidence", advice.stopping_evidence)
+    show_confidence("Crash-effect evidence", advice.crash_evidence)
+    if advice.air_evidence:
+        show_confidence("Air-quality evidence", advice.air_evidence)
+    st.dataframe(pd.DataFrame([{
+        "Limit (km/h)": c.limit_kmh,
+        "Stopping distance (m)": round(c.stopping_m, 1),
+        "Stops in time": "yes" if c.fits else "no",
+        "Mean speed change (km/h)": round(c.mean_speed_change_kmh, 1),
+        "Injury crashes (%)": _pct(c.injury_pct, c.injury_low_pct, c.injury_high_pct),
+        "Deaths (%)": _pct(c.killed_pct, c.killed_low_pct, c.killed_high_pct),
+    } for c in advice.candidates]), hide_index=True)
+    st.caption("Crash columns: change against 80 km/h, typical value with the published range.")
+    for caveat in advice.caveats:
+        st.caption(caveat)
+    with st.expander("Sources"):
+        for source in advice.sources:
+            st.markdown(f"- {source.citation} [Link]({source.url})")
+
+
 @st.fragment(run_every=(SCHEDULER_POLL_S if state.get("auto_run") else None))
 def scheduler():
     """Polls often and asks whether a cycle is due, so a slightly early tick cannot skip one."""
@@ -153,7 +188,7 @@ elif skill is not None and skill < config.SKILL_MEANINGFUL_PCT:
                f"(skill {skill:+.1f}%). Treat its limits as advisory.")
 
 bands = ranges.load_bands()
-inputs, decision = st.columns([1, 1.5], gap="large")
+inputs, decision, research = st.columns([1, 1.25, 1.15], gap="large")
 
 with inputs:
     st.subheader("Conditions")
@@ -208,6 +243,9 @@ with decision:
 
     st.subheader("History")
     st.dataframe(read_history(), hide_index=True)
+
+with research:
+    show_research(state["last_result"])
 
 with st.expander("Normal and abnormal values for each parameter"):
     st.markdown("Rules change the limit. Data bands only describe what was typical in January and do not.")

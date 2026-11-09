@@ -5,7 +5,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from core import air_quality as air_module
-from core import config, confidence, features, llm_manager, model, parameter_ranges, router, weather_policy
+from core import (config, confidence, features, llm_manager, model, parameter_ranges, research_advisor, router,
+                  weather_policy)
 from core.decider import Proposal, decide
 
 
@@ -22,6 +23,7 @@ class CycleResult:
     review: bool = False
     req1_met: bool = None
     router_confidence: confidence.Confidence = field(default_factory=confidence.rule_confidence)
+    research: research_advisor.ResearchAdvice = None
 
 
 class SpeedLimitCycle:
@@ -84,6 +86,7 @@ class SpeedLimitCycle:
         result = CycleResult(
             "published", final.limit_kmh, final.reduction_kmh, final.reasons, route, weather, air, air_reading,
             final.review, weather.req1_met if weather else None,
+            research=research_advisor.advise(readings, air_reading),
         )
         self._log(result, source, readings)
         return result
@@ -109,6 +112,7 @@ class SpeedLimitCycle:
             "llm_answers_kmh": result.air.answers if result.air else None,
             "llm_source": result.air.source if result.air else None,
             "llm_confidence": result.air.confidence.to_dict() if result.air else None,
+            "research": result.research.summary() if result.research else None,
         }
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.log_path, "a", encoding="utf-8") as handle:

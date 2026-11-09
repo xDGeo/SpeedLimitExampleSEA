@@ -24,6 +24,7 @@ Every network and LLM result shows a confidence level and the reasons for it. An
 | [docs/DATA_QUALITY.md](docs/DATA_QUALITY.md) | What was found, fixed and validated, with plots |
 | [docs/PARAMETER_RANGES.md](docs/PARAMETER_RANGES.md) | Normal and abnormal values with units |
 | [docs/SYNTHETIC_DATA.md](docs/SYNTHETIC_DATA.md) | Why generating more data does not help |
+| [reports/Speed limit advisor evidence.md](reports/Speed%20limit%20advisor%20evidence.md) | Cited evidence behind the "Research suggests" panel |
 | [CLAUDE.md](CLAUDE.md) | Guidance for working on this repository with Claude Code |
 
 ## Quick start
