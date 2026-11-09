@@ -30,8 +30,8 @@ ALLOWED_LIMITS = (40, 50, 60, 70, 80)
 CANDIDATE_LIMITS = (40, 50, 60, 70)
 ALLOWED_REDUCTIONS = (0, 10, 20, 30, 40)
 REQ1_TARGET_PER_HOUR = 1.0
-# Used only if the network cannot run: the limit with the most dark or ice evidence.
-NN_FAILURE_LIMIT = 60
+# Used when no limit meets REQ1 or the network cannot run: the limit with the most dark or ice evidence.
+FALLBACK_LIMIT = 60
 
 # Sensors. Sensor 16 is traffic although its type code T is shared with temperature.
 SENSOR_KIND = {

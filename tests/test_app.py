@@ -64,7 +64,7 @@ def test_dark_shows_confidence_and_flag(tmp_path):
     at.number_input(key="water_um").set_value(0.0)
     press(at)
     text = all_text(at)
-    assert at.session_state["last_result"].limit_kmh == 70
+    assert at.session_state["last_result"].limit_kmh == 60
     assert "REQ1 not met" in text
     assert "Low" in text
     assert "guessing the average" in text

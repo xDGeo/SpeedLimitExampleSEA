@@ -42,7 +42,7 @@ Setup: `uv venv --python 3.12 .venv`, then `uv pip install --python .venv/bin/py
 
 ## Agreed behaviour that looks odd
 
-When no limit meets REQ1, the policy picks the limit with the lowest prediction, with no monotonic constraint. It may therefore choose 70 km/h on an icy night. This was the owner's decision. The GUI flags "REQ1 not met". See `docs/ARCHITECTURE.md`.
+When no limit meets REQ1, the policy uses a fixed 60 km/h and requests operator review, even if another limit has a lower prediction. On the current data this applies to every dark or black-ice hour, so the network does not change the outcome. Do not go back to "lowest prediction": it chose 70 km/h for every such hour. See `docs/ARCHITECTURE.md`.
 
 ## Do not commit
 

@@ -31,8 +31,8 @@ fork
     if (Any limit predicted <= 1/h?) then (yes)
       :Take the highest such limit;
     else (no)
-      :Take the lowest prediction,
-      flag "REQ1 not met";
+      :Use the fixed 60 km/h,
+      flag "REQ1 not met", request review;
     endif
     :Rate NN confidence with reasons;
   endif

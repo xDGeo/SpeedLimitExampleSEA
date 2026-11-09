@@ -45,8 +45,8 @@ class SpeedLimitCycle:
             weather = weather_policy.choose_limit(predictions, meta["skill_pct"], meta["support_hours"], inside)
         except Exception as error:  # a broken model must not stop the cycle
             reason = (f"Neural network unavailable ({error}). Using the fixed limit of "
-                      f"{config.NN_FAILURE_LIMIT} km/h")
-            return None, Proposal(config.NN_FAILURE_LIMIT, "weather", reason, review=True)
+                      f"{config.FALLBACK_LIMIT} km/h")
+            return None, Proposal(config.FALLBACK_LIMIT, "weather", reason, review=True)
         return weather, Proposal(weather.limit_kmh, "weather", weather.reason, review=not weather.req1_met)
 
     def _air_proposal(self, override):

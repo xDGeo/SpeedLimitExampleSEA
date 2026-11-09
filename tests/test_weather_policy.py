@@ -29,19 +29,30 @@ def test_exactly_one_meets_target():
     assert decision.req1_met
 
 
-def test_none_meets_target_picks_lowest_prediction():
+def test_none_meets_target_uses_fixed_60():
     decision = choose([1.9, 1.4, 1.3, 1.1])
-    assert decision.limit_kmh == 70
+    assert decision.limit_kmh == 60
+    assert decision.reduction_kmh == 20
     assert not decision.req1_met
     assert "REQ1 not met" in decision.reason
+    assert "60 km/h" in decision.reason
 
 
-def test_lowest_prediction_may_be_in_the_middle():
-    assert choose([1.9, 1.2, 1.5, 1.6]).limit_kmh == 50
+def test_fixed_60_ignores_which_limit_scores_lowest():
+    assert choose([1.1, 1.5, 1.9, 1.6]).limit_kmh == 60
+    assert choose([1.9, 1.2, 1.5, 1.6]).limit_kmh == 60
 
 
-def test_tie_takes_slower_limit():
-    assert choose([1.5, 1.2, 1.2, 1.6]).limit_kmh == 50
+def test_fixed_60_rates_the_60_prediction():
+    decision = wp.choose_limit(preds([1.2, 1.2, 1.5, 1.2]), 10.0, {40: 200, 50: 200, 60: 3, 70: 200}, True)
+    assert decision.limit_kmh == 60
+    assert any("only 3 training hours" in reason for reason in decision.confidence.reasons)
+
+
+def test_fixed_60_needs_a_prediction_for_60():
+    three = [p for p in preds([1.5, 1.5, 1.5, 1.5]) if p.limit_kmh != 60]
+    with pytest.raises(wp.InvalidPrediction):
+        wp.choose_limit(three, -2.0, SUPPORT, True)
 
 
 def test_guardrail_rejects_unknown_limit():

@@ -101,13 +101,17 @@ Accidents have no link to sensors. They are joined by day and hour only, which i
 | Human in the loop | The operator sees flags and can override at any time, because software guardrails cannot be fully trusted |
 | Append-only decision log | Every published limit can be reconstructed afterwards |
 
-## 4. A decision with a known risk
+## 4. What happens when REQ1 cannot be met
 
-When no limit meets REQ1, the policy selects the limit with the lowest predicted near-accident rate. There is no constraint that a slower limit must be predicted as safer. The project owner chose this option.
+When no candidate limit is predicted at or below 1 near-accident per hour, the policy uses a **fixed 60 km/h**, shows "REQ1 not met", requests operator review and logs it. 60 km/h is the limit with the most evidence in dark or black-ice hours (230 hours).
 
-The risk is concrete. In the training data, lower limits coincide with more near-accidents (40 km/h: 1.86 per hour, 70 km/h: 1.13 per hour). That pattern is noise or confounding, but a network can learn it and then favour 70 km/h on an icy night. The system therefore shows "REQ1 not met", requests operator review, logs it and leaves the override with the operator. The replay in [Results](#results) shows this risk is real. Before any real use, this should be replaced with a fixed expert limit or a monotonic constraint.
+**Why not the limit with the lowest prediction.** That was the first design, and replaying the data showed the problem. In the training data, lower limits coincide with more near-accidents (40 km/h: 1.86 per hour, 70 km/h: 1.13 per hour). This is noise or confounding, but the network learned it, so the rule chose 70 km/h in all 389 dark or black-ice hours, including icy nights. The project owner reviewed that result and chose the fixed limit instead.
 
-If the network itself is unavailable, this rule cannot run. The cycle then proposes a fixed 60 km/h, the limit with the most evidence in dark or black-ice hours, and sets a review flag.
+**Why not 40 km/h.** It would be the strictest choice, but there are only 7 hours of evidence at 40 km/h, and the data does not show that it helps.
+
+**The trade-off.** On this data the network never finds a limit that meets REQ1, so the fixed limit applies in every dark or black-ice hour. The network therefore does not change the outcome yet. It stays in the design so that it can take over if better data gives it real predictive skill. Until then, 60 km/h is a cautious default and not a proven safe limit, which is why an operator is asked to review it.
+
+If the network itself is unavailable, the cycle uses the same fixed 60 km/h and also sets a review flag.
 
 ## 5. Confidence levels
 
@@ -222,10 +226,10 @@ Replaying all 389 dark or black-ice hours of Year N:
 | Result | Value |
 |---|---|
 | Hours where a limit met REQ1 (at most 1 predicted near-accident/h) | **0 of 389** |
-| Limit chosen | **70 km/h in all 389 hours** |
+| Limit used | **Fixed 60 km/h in all 389 hours** |
 | Neural-network confidence | Low in all 389 hours |
 
-This is the risk from section 4 happening in practice. The network picked up the backwards pattern (slower limits coincide with more near-accidents), so the "lowest prediction" rule always picks the fastest candidate. On this data the weather path therefore only ever reduces the limit by 10 km/h. It is an honest output of the agreed rule, and it is not a safe policy.
+No hour meets REQ1, so the weather path always reduces the limit by 20 km/h and always asks for operator review. An earlier rule that took the limit with the lowest prediction chose 70 km/h in all 389 hours, which is why it was replaced (see section 4).
 
 ### LLM
 
@@ -248,4 +252,4 @@ The local model stayed within the expected ranges in all 5 golden test cases. Fo
 2. Collect data for a full year and more road sections.
 3. Vary limits in a controlled trial, so cause and effect can be separated.
 4. Measure near-accidents per 1000 cars instead of raw counts.
-5. Replace "lowest prediction" with fixed expert limits or a monotonic constraint.
+5. Have road-safety experts confirm or replace the fixed 60 km/h.

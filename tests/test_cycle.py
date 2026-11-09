@@ -72,7 +72,7 @@ def test_clear_day_good_air_is_80(tmp_path):
 def test_dark_uses_network(tmp_path):
     result = build(tmp_path).run(NIGHT_READINGS)
     assert result.route.use_nn
-    assert result.limit_kmh == 70
+    assert result.limit_kmh == 60
     assert not result.req1_met
     assert result.weather.confidence.level == "Low"
 
@@ -118,11 +118,11 @@ def test_air_api_down_flags_review_without_reduction(tmp_path):
 
 def test_invalid_input_rejected_and_limit_kept(tmp_path):
     system = build(tmp_path)
-    assert system.run(NIGHT_READINGS).limit_kmh == 70
+    assert system.run(NIGHT_READINGS).limit_kmh == 60
     rejected = system.run({**DAY_READINGS, "temperature_c": 500})
     assert rejected.status == "rejected"
-    assert rejected.limit_kmh == 70
-    assert system.last_limit == 70
+    assert rejected.limit_kmh == 60
+    assert system.last_limit == 60
 
 
 def test_invalid_first_input_publishes_nothing(tmp_path):
@@ -146,7 +146,7 @@ def test_audit_record_written(tmp_path):
     build(tmp_path).run(NIGHT_READINGS, source="scheduler")
     record = log_lines(tmp_path)[0]
     assert record["source"] == "scheduler"
-    assert record["limit_kmh"] == 70
+    assert record["limit_kmh"] == 60
     assert record["unit"] == "km/h"
     assert record["predictions"][0]["limit_kmh"] == 40
     assert record["nn_confidence"]["level"] == "Low"

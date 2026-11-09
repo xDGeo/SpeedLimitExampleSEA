@@ -74,7 +74,7 @@ The first answer for new air-quality values takes around 10 seconds, because the
 |---|---|
 | Speed limit, Reduction | The result in km/h. Reduction is measured from 80 km/h |
 | Reasons | Why this limit applies |
-| REQ1 not met | No limit is predicted to keep near-accidents at or below 1 per hour |
+| REQ1 not met | No limit is predicted to keep near-accidents at or below 1 per hour, so the fixed 60 km/h applies |
 | Operator review needed | A person should look at this limit |
 | Router | A fixed rule, so it has no uncertainty |
 | Neural network level | High, Medium or Low, with one reason per check |
@@ -97,7 +97,7 @@ Pick a limit under **Operator override** and press **Apply override**. It is pub
 | Scenario | Expected result |
 |---|---|
 | Clear day with good air | 80 km/h |
-| Dark night or Icy night | Network path, normally 70 km/h, REQ1 not met, Low confidence |
+| Dark night or Icy night | Network path, normally the fixed 60 km/h, REQ1 not met, operator review, Low confidence |
 | Black ice in daylight | Network path |
 | Clear day, manual PM10 120 and NO₂ 250 µg/m³ | The LLM reduces the limit (50 km/h when tested) |
 | Icy night with that poor air | The strictest proposal wins |
