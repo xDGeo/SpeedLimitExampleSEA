@@ -12,7 +12,7 @@ def dataset(n_days=40, per_day=20, signal=True, seed=0):
     rows = n_days * per_day
     days = np.repeat(np.arange(1, n_days + 1), per_day)
     X = pd.DataFrame(rng.normal(size=(rows, 2)), columns=COLUMNS)
-    rate = np.exp(0.2 + (1.0 * X["a"].values if signal else 0.0))
+    rate = np.exp(0.2 + (1.0 if signal else 0.0) * X["a"].values)
     y = rng.poisson(rate)
     return X, pd.Series(y, dtype=float), pd.Series(days)
 

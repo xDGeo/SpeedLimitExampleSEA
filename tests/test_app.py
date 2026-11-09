@@ -1,11 +1,16 @@
+from pathlib import Path
+
 from streamlit.testing.v1 import AppTest
 
 from core import cycle
 from tests.test_cycle import FakeAir, FakeLLM, FakePredictor
 
 
+APP = Path(__file__).resolve().parent.parent / "app.py"
+
+
 def launch(tmp_path, llm=None):
-    at = AppTest.from_file("app.py", default_timeout=30)
+    at = AppTest.from_file(str(APP), default_timeout=30)
     at.session_state["cycle"] = cycle.SpeedLimitCycle(
         predictor=FakePredictor(), llm=llm or FakeLLM(), air_client=FakeAir(),
         log_path=tmp_path / "decisions.jsonl",
