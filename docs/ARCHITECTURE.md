@@ -42,6 +42,7 @@ An architecture is its components plus the allowed-to-use specification. Both ar
 | CycleOrchestrator | `core/cycle.py` | Runs one full decision in fixed order and writes the audit record |
 | GUI + Scheduler | `app.py` | Lets the operator enter readings, run on a timer, see reasons and override |
 | RetrainingAnalysis | `core/retraining.py` | Compares Year N+1 with the trained model and recommends what to do |
+| SyntheticDataExperiment | `synthetic_experiment.py` | Tests whether generated data improves the model on real held-out days, without changing the production model |
 
 ### How the components cooperate
 
@@ -245,6 +246,10 @@ The local model stayed within the expected ranges in all 5 golden test cases. Fo
 | Model retrained on Year N+1 | Cross-validated skill -1.1% |
 
 **Decision: do not retrain yet. Clarify the data first.** A full year of sensor readings cannot be identical to the previous one, so the file may be a copy. If it is genuine, retraining would adjust only the base rate and add no predictive skill.
+
+### Synthetic data
+
+Generating more data does not help. Data imitating the real data, up to 20 times as much, stays within noise on real held-out days. Data with an assumed effect of speed teaches the model that assumption: "faster is riskier" and "slower is riskier" both claim to satisfy REQ1, while recommending opposite limits and losing to guessing the average on real days. See [SYNTHETIC_DATA.md](SYNTHETIC_DATA.md).
 
 ### What should change before real use
 

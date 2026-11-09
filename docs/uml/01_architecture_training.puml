@@ -18,6 +18,8 @@ skinparam ArrowColor #444444
 [core.model\nEnsembleTrainer + Predictor] as Model
 [core.router\nRouter] as Router
 [core.parameter_ranges\nNormalAbnormal] as Ranges
+[synthetic_experiment.py\nSyntheticDataExperiment] as Synthetic
+[core.weather_policy\nWeatherPolicy] as Weather
 database "data/*.csv" as CSV
 database "artifacts/\nmodel.pt, reports" as Art
 
@@ -36,6 +38,11 @@ Retraining ..> Data : <<use>>
 Retraining ..> Labels : <<use>>
 Retraining ..> Features : <<use>>
 Retraining ..> Model : <<use>>
+Synthetic ..> Data : <<use>>
+Synthetic ..> Labels : <<use>>
+Synthetic ..> Features : <<use>>
+Synthetic ..> Model : <<use>>
+Synthetic ..> Weather : <<use>>
 Features ..> Router : <<use>>
 Data ..> CSV : reads
 Model ..> Art : writes

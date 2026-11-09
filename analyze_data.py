@@ -366,7 +366,7 @@ def main():
     write_quality_report(checked, year_n.report, label_counts, demo_report, demo_error, rates, table["near_accidents"])
     print(f"Validation passed: {checked.passed}")
     print(f"Demo cleaning error: {demo_error:.3f} °C")
-    print(f"Wrote {len(list(config.PLOTS_DIR.glob('*.png')))} plots, DATA_QUALITY.md and PARAMETER_RANGES.md")
+    print(f"Wrote {len(list(config.PLOTS_DIR.glob('0[1-8]_*.png')))} plots, DATA_QUALITY.md and PARAMETER_RANGES.md")
     checked.raise_if_failed()
 
 

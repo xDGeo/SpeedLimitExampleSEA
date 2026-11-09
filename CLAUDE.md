@@ -12,6 +12,7 @@ Use the project environment. System Python is 3.15 and has no PyTorch.
 .venv/bin/python analyze_data.py              # clean, validate, plots, parameter ranges
 .venv/bin/python train.py                     # stops if validation fails
 .venv/bin/python check_retraining.py          # Year N+1 analysis
+.venv/bin/python synthetic_experiment.py      # does generated data help? (it does not)
 .venv/bin/python -m streamlit run app.py      # GUI, add --server.address localhost
 plantuml -tpng docs/uml/*.puml                # render diagrams
 ```
@@ -38,6 +39,7 @@ Setup: `uv venv --python 3.12 .venv`, then `uv pip install --python .venv/bin/py
 - Accident hours run 1 to 24, sensor hours 0 to 23. The code subtracts 1.
 - Illuminance sensors report lux, while SPEC1 is in millilux. Conversion happens only in `core/router.py`.
 - Sensor code `T` means temperature and traffic. Sensor 16 is traffic. Sensor 19 is undocumented and treated as temperature.
+- Generated data does not improve the model, and data with an assumed speed effect only returns the assumption. Never train the production model on synthetic data. See `docs/SYNTHETIC_DATA.md`.
 - Licence plates are dropped at load and must never reach features or logs.
 
 ## Agreed behaviour that looks odd

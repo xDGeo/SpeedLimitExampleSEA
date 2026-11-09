@@ -1,0 +1,104 @@
+{
+  "imitation": [
+    {
+      "method": "Real data only",
+      "synthetic_rows": 0,
+      "skill_real_pct": -0.09597485651204885
+    },
+    {
+      "method": "Resampled with noise, x1",
+      "synthetic_rows": 246,
+      "skill_real_pct": -0.1856914664312148
+    },
+    {
+      "method": "Resampled with noise, x5",
+      "synthetic_rows": 1233,
+      "skill_real_pct": -0.49631598076080863
+    },
+    {
+      "method": "Resampled with noise, x20",
+      "synthetic_rows": 4932,
+      "skill_real_pct": -0.24404604865433388
+    },
+    {
+      "method": "Generated from a fitted model, x1",
+      "synthetic_rows": 246,
+      "skill_real_pct": 0.06426547736475552
+    },
+    {
+      "method": "Generated from a fitted model, x5",
+      "synthetic_rows": 1233,
+      "skill_real_pct": -0.9229601857686287
+    },
+    {
+      "method": "Generated from a fitted model, x20",
+      "synthetic_rows": 4932,
+      "skill_real_pct": -0.07696304625368633
+    }
+  ],
+  "assumptions": {
+    "Faster = riskier (speed squared)": {
+      "skill_synthetic_pct": 12.808953603247652,
+      "skill_real_pct": -8.231480575118288,
+      "predicted_per_hour_by_limit_kmh": {
+        "40": 0.591522933891316,
+        "50": 0.8468463466835512,
+        "60": 1.2299101741883933,
+        "70": 1.6380540417521656
+      },
+      "limit_kmh_counts": {
+        "40": 2,
+        "50": 387
+      },
+      "req1_met_hours": 389,
+      "hours": 389,
+      "confidence_counts": {
+        "Medium": 382,
+        "Low": 7
+      }
+    },
+    "Slower = riskier (reversed)": {
+      "skill_synthetic_pct": 20.641414606261044,
+      "skill_real_pct": -2.461328724835554,
+      "predicted_per_hour_by_limit_kmh": {
+        "40": 2.702145761573223,
+        "50": 1.9017408697035134,
+        "60": 1.225022621050592,
+        "70": 0.8765273487966287
+      },
+      "limit_kmh_counts": {
+        "70": 389
+      },
+      "req1_met_hours": 389,
+      "hours": 389,
+      "confidence_counts": {
+        "Medium": 374,
+        "Low": 15
+      }
+    },
+    "Speed has no effect": {
+      "skill_synthetic_pct": -0.01001579063077962,
+      "skill_real_pct": 0.021714388736626677,
+      "predicted_per_hour_by_limit_kmh": {
+        "40": 1.2479772141782668,
+        "50": 1.2531094048507416,
+        "60": 1.264349673278534,
+        "70": 1.2797514911176
+      },
+      "limit_kmh_counts": {
+        "60": 389
+      },
+      "req1_met_hours": 0,
+      "hours": 389,
+      "confidence_counts": {
+        "Low": 389
+      }
+    }
+  },
+  "real_observed_per_hour_by_limit_kmh": {
+    "40": 1.5,
+    "50": 1.309090909090909,
+    "60": 1.1543478260869566,
+    "70": 1.0670103092783505
+  }
+}

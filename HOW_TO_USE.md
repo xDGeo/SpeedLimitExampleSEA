@@ -110,6 +110,7 @@ Pick a limit under **Operator override** and press **Apply override**. It is pub
 | `.venv/bin/python analyze_data.py` | Cleans and validates the data, draws the plots | `docs/plots/`, `docs/DATA_QUALITY.md`, `docs/PARAMETER_RANGES.md` |
 | `.venv/bin/python train.py` | Validates, then trains and evaluates. Stops if validation fails | `artifacts/model.pt`, `artifacts/training_report.json` |
 | `.venv/bin/python check_retraining.py` | Analyses Year N+1 | `artifacts/retraining_report.json` |
+| `.venv/bin/python synthetic_experiment.py` | Tests whether generated data helps, without changing the model | `docs/SYNTHETIC_DATA.md`, `docs/plots/09_*.png`, `docs/plots/10_*.png`, `artifacts/synthetic_report.json` |
 | `.venv/bin/python -m pytest -q` | Runs all tests. Live LLM tests skip if Ollama is down | |
 | `.venv/bin/python -m pytest -q -m "not live"` | Runs the tests without Ollama | |
 | `plantuml -tpng docs/uml/*.puml` | Redraws the diagrams | `docs/uml/*.png` |
