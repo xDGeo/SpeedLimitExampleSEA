@@ -142,9 +142,11 @@ def test_research_table_has_units(tmp_path):
     at = launch(tmp_path)
     set_day(at)
     press(at)
-    columns = " ".join(" ".join(map(str, frame.value.columns)) for frame in at.dataframe)
+    tables = [table.value for table in at.table]
+    columns = " ".join(" ".join(map(str, t.columns)) for t in tables)
     assert "Stopping distance (m)" in columns
     assert "Injury crashes (%)" in columns
+    assert "Limit (km/h)" in columns
 
 
 def test_research_panel_waits_for_a_decision(tmp_path):

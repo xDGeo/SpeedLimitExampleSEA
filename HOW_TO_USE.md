@@ -82,6 +82,21 @@ The first answer for new air-quality values takes around 10 seconds, because the
 | LLM level | Based on how many of the 3 answers agreed. It shows consistency, not correctness |
 | No confidence | The LLM gave no usable answer and a fixed rule decided |
 
+### 4b. Compare with research
+
+The **Research suggests** column shows the limit published research would suggest for the same conditions. It never changes the published limit.
+
+| You see | Meaning |
+|---|---|
+| Published research | The highest limit that can stop within the distance a driver can see |
+| Stopping-distance evidence | How strong the evidence is for that check (High, Medium or Low, with reasons) |
+| Crash-effect evidence | How far the crash estimate can be trusted. It is Low below 70 km/h |
+| Stopping within … m | Stopping distance in m for each limit, and whether it fits |
+| Expected change against 80 km/h | Mean speed change in km/h and the change in injury crashes and deaths in %, with the published range in brackets |
+| Sources | The studies behind the numbers, with links |
+
+These figures are calculations from published studies, not measurements on this road, and they say nothing about near-accidents. The full evidence is in [the research report](reports/Speed%20limit%20advisor%20evidence.md).
+
 The explanation behind the levels is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ### 5. Run on a timer
@@ -102,6 +117,8 @@ Pick a limit under **Operator override** and press **Apply override**. It is pub
 | Clear day, manual PM10 120 and NO₂ 250 µg/m³ | The LLM reduces the limit (50 km/h when tested) |
 | Icy night with that poor air | The strictest proposal wins |
 | Temperature 500 °C | Input rejected, the limit does not change |
+| Black ice in daylight | Research suggests 50 km/h beside the published 60 km/h |
+| Icy night | Research suggests 40 km/h |
 
 ## Run the stages yourself
 

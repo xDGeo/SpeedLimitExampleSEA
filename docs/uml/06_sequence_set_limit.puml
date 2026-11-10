@@ -17,6 +17,7 @@ participant "AirQuality\nClient" as Air
 participant "LLM\nManager" as LLM
 participant "Ollama" as Ollama
 participant "Decider" as Decider
+participant "Research\nAdvisor" as Research
 database "decisions\n.jsonl" as Log
 
 Operator -> GUI : enter readings, press "Set limit now"\n(or auto-run timer fires)
@@ -50,8 +51,10 @@ else input valid
   LLM --> Cycle : reduction km/h, LLM confidence\n(or fallback with review flag)
   Cycle -> Decider : decide(proposals)
   Decider --> Cycle : strictest limit (80 km/h if none)
-  Cycle -> Log : append(decision)
-  Cycle --> GUI : limit, reasons, confidence
+  Cycle -> Research : advise(readings, air quality)
+  Research --> Cycle : research limit, evidence, sources\n(advisory only)
+  Cycle -> Log : append(decision, research)
+  Cycle --> GUI : limit, reasons, confidence, research
 end
 GUI --> Operator : show limit in km/h and why
 opt operator disagrees

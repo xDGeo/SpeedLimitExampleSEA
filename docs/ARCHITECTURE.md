@@ -96,6 +96,7 @@ Accidents have no link to sensors. They are joined by day and hour only, which i
 | Candidates 40 to 70 km/h | 80 km/h never occurs in dark or black-ice hours, so asking about it would be pure extrapolation |
 | PyTorch | The network, the loss and the training loop are explicit and can be explained line by line |
 | Streamlit | The GUI is short Python, which suits an MVP. It is bound to localhost |
+| Research as explicit cited formulas | Outside knowledge stays visible, checkable and separate from what the system learned (section 10) |
 | Local Ollama (`qwen3:8b`) | Already installed, free, no account, and no data leaves the machine |
 | Open-Meteo | The assignment requires an API. It needs no account, and only fixed Vienna coordinates are sent |
 | Guardrails around both AI parts | The lecture is clear that AI output cannot go straight to the user. Output must be one of a small set of legal values |
@@ -174,6 +175,7 @@ The control experiment in `tests/test_model.py` shows that the same pipeline lea
 | Data fit for use | DataCleaner, DataValidator | `test_data.py`, `test_validation.py` |
 | Regular operation | CycleOrchestrator, GUI | `test_cycle.py`, `test_app.py` |
 | Confidence shown | ConfidenceRater, WeatherPolicy, LLMManager | `test_confidence.py`, `test_cycle.py` |
+| Research shown beside the decision | ResearchAdvisor | `test_research_advisor.py`, `test_cycle.py`, `test_app.py` |
 | Retraining decision | RetrainingAnalysis | `test_retraining.py` |
 | Allowed-to-use | All | `test_architecture.py` |
 
@@ -194,6 +196,41 @@ The control experiment in `tests/test_model.py` shows that the same pipeline lea
 | Some temperature sensors return Fahrenheit | Sensor mapping in `config.py` and a conversion in `data.py`; retrain if the training data changes | Only the cleaner knows raw units. Everything after it sees °C |
 | Only skidding counts as a near-accident | Call the labeler with `kinds=("SkidAngle",)`, then validate and retrain | The label definition is in one place |
 | Electric cars are exempt from air-quality limits | The Decider must return two limits, and the cycle, GUI and log must carry both, plus signs that can show two limits | The biggest change: "one limit for everyone" is an architectural assumption |
+
+## 10. What research suggests (advisory panel)
+
+Beside the system's decision, the GUI shows what published research suggests for the same conditions. It never sets the published limit. The evidence behind every number, with its read-status and conflicts, is in [the research report](../reports/Speed%20limit%20advisor%20evidence.md).
+
+**Why explicit formulas and not a second neural network.** A network trained on published figures would hide outside assumptions inside its weights and look as if it had learned them from this road. The synthetic data experiment showed where that leads. The advisor writes each assumption down as a named parameter in `core/config.py`, with its source.
+
+**How it decides**
+
+1. The surface comes from the same rules as the Router: black ice under SPEC2, wet if there is any water, otherwise dry.
+2. The available distance is 91 m in darkness (AAA 2015, halogen low beam, an upper bound) and 128 m in daylight (AASHTO stopping distance at 80 km/h, used as a proxy for the road's design).
+3. Stopping distance = reaction distance at 2.5 s + braking distance with friction 0.8 (dry), 0.7 (wet) or 0.15 (black ice), from VTI 911A.
+4. The suggestion is the highest allowed limit that stops within the available distance.
+5. For each limit, the expected change in injury crashes and deaths uses Elvik's Exponential Model (β 0.034 and 0.065), with one quarter of a posted cut reaching mean speed (Elvik et al. 2004). The range shown runs from the weakest published case (compliance 0.17) to the strongest (compliance 0.55 with the higher 2019 coefficients).
+
+| Conditions | Research suggests | Main reason |
+|---|---|---|
+| Daylight, dry or wet | 80 km/h | Stops well within the design distance |
+| Darkness, dry | 80 km/h | 87 m stopping distance fits within 91 m; darkness alone has the weakest evidence |
+| Darkness, wet | 70 km/h | 80 km/h needs 91.5 m |
+| Black ice, daylight | 50 km/h | 60 km/h needs 136 m against 128 m available |
+| Black ice, darkness | 40 km/h | 50 km/h needs 100 m against 91 m available |
+| Poor air quality alone | 80 km/h | No published evaluation of cuts below 80 km/h on a free-flowing road |
+
+**Evidence levels.** These are shown instead of a single confidence:
+
+| Part | High | Medium | Low |
+|---|---|---|---|
+| Stopping-distance check | Daylight on a dry or wet road | Black ice; darkness on a wet road | Darkness alone |
+| Crash-effect estimate | n/a | Suggested limit of 70 km/h | 60 km/h or lower, which is outside most studies |
+| Air quality | n/a | n/a | Always, when the EU limit is exceeded |
+
+When the suggestion is 80 km/h, the crash-effect estimate is shown as not applicable.
+
+**What it cannot do.** It does not predict near-accidents, because no published model links speed to them. So it cannot say whether REQ1 is met. Its crash figures are network-average calculations for free-flowing traffic, not forecasts for this road. The injury coefficient is disputed (0.034 or 0.06), and no compliance value has been published for advisory signs.
 
 ## Results
 

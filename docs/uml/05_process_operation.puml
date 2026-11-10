@@ -63,13 +63,18 @@ else (no)
   :Use 80 km/h (REQ3);
 endif
 
+|ResearchAdvisor|
+:Compute what research suggests:
+stopping distance, crash effect, sources
+(advisory only, the limit is unchanged);
+
 |Audit log|
-:Append limit, reasons, predictions
-and confidence to decisions.jsonl;
+:Append limit, reasons, predictions,
+confidence and research to decisions.jsonl;
 
 |GUI / Scheduler|
 :Display limit in km/h, reasons
-and confidence;
+and confidence, with research beside it;
 if (Operator overrides?) then (yes)
   :Publish operator limit and log it;
 else (no)

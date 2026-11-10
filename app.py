@@ -135,7 +135,7 @@ def show_result(result):
 
 
 def _pct(central, low, high) -> str:
-    return f"{central:+.1f} ({low:+.1f} to {high:+.1f})" if central else "0"
+    return f"{central:+.0f} ({low:+.0f} to {high:+.0f})" if central else "0"
 
 
 def show_research(result):
@@ -152,15 +152,20 @@ def show_research(result):
     show_confidence("Crash-effect evidence", advice.crash_evidence)
     if advice.air_evidence:
         show_confidence("Air-quality evidence", advice.air_evidence)
-    st.dataframe(pd.DataFrame([{
+    st.markdown(f"**Stopping within {advice.available_distance_m:g} m**")
+    st.table(pd.DataFrame([{
         "Limit (km/h)": c.limit_kmh,
-        "Stopping distance (m)": round(c.stopping_m, 1),
+        "Stopping distance (m)": f"{c.stopping_m:.1f}",
         "Stops in time": "yes" if c.fits else "no",
-        "Mean speed change (km/h)": round(c.mean_speed_change_kmh, 1),
+    } for c in advice.candidates]))
+    st.markdown("**Expected change against 80 km/h**")
+    st.table(pd.DataFrame([{
+        "Limit (km/h)": c.limit_kmh,
+        "Mean speed (km/h)": f"{c.mean_speed_change_kmh:+.1f}",
         "Injury crashes (%)": _pct(c.injury_pct, c.injury_low_pct, c.injury_high_pct),
         "Deaths (%)": _pct(c.killed_pct, c.killed_low_pct, c.killed_high_pct),
-    } for c in advice.candidates]), hide_index=True)
-    st.caption("Crash columns: change against 80 km/h, typical value with the published range.")
+    } for c in advice.candidates]))
+    st.caption("Typical value, with the published range in brackets. A calculation, not a measurement on this road.")
     for caveat in advice.caveats:
         st.caption(caveat)
     with st.expander("Sources"):

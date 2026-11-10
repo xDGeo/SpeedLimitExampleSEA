@@ -46,6 +46,10 @@ Setup: `uv venv --python 3.12 .venv`, then `uv pip install --python .venv/bin/py
 
 When no limit meets REQ1, the policy uses a fixed 60 km/h and requests operator review, even if another limit has a lower prediction. On the current data this applies to every dark or black-ice hour, so the network does not change the outcome. Do not go back to "lowest prediction": it chose 70 km/h for every such hour. See `docs/ARCHITECTURE.md`.
 
+## Research advisor
+
+`core/research_advisor.py` shows what published research suggests beside the decision. It is advisory and must never feed the Decider. Every parameter in its `config.py` section must trace to `reports/Speed limit advisor evidence.md`. Keep it as explicit formulas: do not train a network on research figures.
+
 ## Do not commit
 
 Lecture PDFs or the slide deck. Run logs in `artifacts/` are ignored by `.gitignore`.

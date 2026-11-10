@@ -17,6 +17,7 @@ actor Operator
 [AirQualityClient] as Air
 [LLMManager] as LLM
 [SpeedLimitDecider] as Decider
+[ResearchAdvisor\n(advisory only)] as Research
 cloud "Open-Meteo" as Api
 cloud "Ollama" as Ollama
 database "decisions.jsonl" as Log
@@ -41,7 +42,9 @@ Ollama --> LLM : <<flow>> 3 JSON replies
 LLM --> Cycle : <<flow>> reduction km/h,\nLLM confidence + reasons
 Cycle --> Decider : <<flow>> proposals
 Decider --> Cycle : <<flow>> strictest limit, flags
+Cycle --> Research : <<flow>> readings, PM10, NO2
+Research --> Cycle : <<flow>> research limit km/h,\nevidence levels, sources
 Cycle --> Log : <<flow>> audit record
-Cycle --> GUI : <<flow>> limit km/h, reasons, confidence
-GUI --> Operator : <<flow>> displayed limit
+Cycle --> GUI : <<flow>> limit km/h, reasons, confidence,\nresearch suggestion
+GUI --> Operator : <<flow>> displayed limit,\nresearch beside it
 @enduml
