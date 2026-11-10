@@ -64,61 +64,58 @@ Each field shows a badge. **Normal** and **Abnormal** are defined in [docs/PARAM
 
 By default the app uses the Open-Meteo forecast for Vienna and takes the worst PM10 and NO₂ of the next 6 hours. Turn on **Enter air quality manually** to try other values.
 
-### 3. Press Set limit now
+### 3. Press Calculate
 
-The first answer for new air-quality values takes around 10 seconds, because the local LLM is asked three times. Repeated values are remembered and are faster.
+**Calculate** is at the top right. The first answer for new air-quality values takes about 10 seconds, because the local LLM is asked three times. Repeated values are remembered and are faster.
 
-### 4. Read the decision
+If you change any condition after calculating, a yellow note says **Conditions have changed**. Press Calculate again to update.
 
-| You see | Meaning |
-|---|---|
-| Speed limit, Reduction | The result in km/h. Reduction is measured from 80 km/h |
-| Reasons | Why this limit applies |
-| REQ1 not met | No limit is predicted to keep near-accidents at or below 1 per hour, so the fixed 60 km/h applies |
-| Operator review needed | A person should look at this limit |
-| Router | A fixed rule, so it has no uncertainty |
-| Neural network level | High, Medium or Low, with one reason per check |
-| Candidate table | Predicted near-accidents per hour for each limit, the 90% range of the 10 networks, and the share of networks at or below 1 per hour |
-| LLM level | Based on how many of the 3 answers agreed. It shows consistency, not correctness |
-| No confidence | The LLM gave no usable answer and a fixed rule decided |
+### 4. Read the recommendation
 
-### 4b. Compare with research
-
-The **Research suggests** column shows the limit published research would suggest for the same conditions. It never changes the published limit.
+From top to bottom:
 
 | You see | Meaning |
 |---|---|
-| Published research | The highest limit that can stop within the distance a driver can see |
-| Stopping-distance evidence | How strong the evidence is for that check (High, Medium or Low, with reasons) |
-| Crash-effect evidence | How far the crash estimate can be trusted. It is Low below 70 km/h |
-| Stopping within … m | Stopping distance in m for each limit, and whether it fits |
-| Expected change against 80 km/h | Mean speed change in km/h and the change in injury crashes and deaths in %, with the published range in brackets |
-| Sources | The studies behind the numbers, with links |
+| **Published limit** (green or blue bar) | The limit in force now, and who set it: the system (green) or an operator override (blue). A newly opened page shows the last published limit |
+| **Recommended limit** | What the system recommends, in km/h: the lower of the neural network and the LLM, or 80 km/h if neither gives a reason to reduce |
+| REQ1 not met / Operator review needed | A person should look at this limit |
+| **Three cards** | Each shows its own speed in km/h, a confidence or evidence level, and one line saying why |
+| Details (fold-out) | The reasons behind each confidence level, the network's prediction for each limit, the LLM's three sampled speeds, the research tables and sources |
 
-These figures are calculations from published studies, not measurements on this road, and they say nothing about near-accidents. The full evidence is in [the research report](reports/Speed%20limit%20advisor%20evidence.md).
+The three cards:
 
-The explanation behind the levels is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+| Card | Speed it shows | Used for the recommendation? |
+|---|---|---|
+| **Neural network (dark or black ice)** | Its limit in darkness or black ice, or "Not used" otherwise. When no limit reaches at most 1 near-accident per hour, the fixed 60 km/h applies | Yes |
+| **LLM (air quality)** | The local LLM's limit for the current PM10 and NO₂ | Yes |
+| **Research (expert evidence)** | The fastest limit that can still stop within the distance a driver can see, from published studies | No, comparison only |
 
-### 5. Run on a timer
+Confidence levels: **High**, **Medium** or **Low**; **No confidence** means the LLM gave no usable answer and a fixed rule decided. LLM agreement shows consistency, not correctness. The neural network is always Low, because in testing it does not meaningfully beat guessing the average.
 
-Turn on **Auto-run on a timer** and set the interval in seconds (3600 = hourly, minimum 5). Cycles use the values currently on the screen. Auto-run stops if you close the page.
+The research figures are calculations from published studies, not measurements on this road, and they say nothing about near-accidents. The evidence is in [the research report](reports/Speed%20limit%20advisor%20evidence.md), and the reasoning behind all levels is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-### 6. Override
+### 5. Publish a different limit (override)
 
-Pick a limit under **Operator override** and press **Apply override**. It is published at once and logged. The next automatic or manual cycle replaces it.
+Use this when you disagree with the recommendation, for example after an accident or during road works. Choose a limit under **Publish a different limit** and press **Publish this limit**. The list starts at the limit currently published.
+
+The bar at the top then says the limit was set by an operator override, and still shows what the system recommends. The override stays published until the next Calculate or timer cycle. Every override is logged.
+
+### 6. Run on a timer
+
+Open **Run automatically on a timer** at the bottom left, turn on **Auto-run**, and set the interval in seconds (3600 = hourly, minimum 5). Each cycle uses the values on the screen and publishes its recommendation. Auto-run stops if you close the page.
 
 ### Try these
 
-| Scenario | Expected result |
-|---|---|
-| Clear day with good air | 80 km/h |
-| Dark night or Icy night | Network path, normally the fixed 60 km/h, REQ1 not met, operator review, Low confidence |
-| Black ice in daylight | Network path |
-| Clear day, manual PM10 120 and NO₂ 250 µg/m³ | The LLM reduces the limit (50 km/h when tested) |
-| Icy night with that poor air | The strictest proposal wins |
-| Temperature 500 °C | Input rejected, the limit does not change |
-| Black ice in daylight | Research suggests 50 km/h beside the published 60 km/h |
-| Icy night | Research suggests 40 km/h |
+| Scenario, then Calculate | Neural network | LLM | Research | Recommended |
+|---|---|---|---|---|
+| Clear day | Not used | 80 km/h | 80 km/h | 80 km/h |
+| Dark night | 60 km/h, REQ1 not met | 80 km/h | 80 km/h | 60 km/h |
+| Black ice in daylight | 60 km/h, REQ1 not met | 80 km/h | 50 km/h | 60 km/h |
+| Icy night | 60 km/h, REQ1 not met | 80 km/h | 40 km/h | 60 km/h |
+| Clear day, manual PM10 120 and NO₂ 250 µg/m³ | Not used | lower, 50 km/h when tested | 80 km/h | the LLM's value |
+| Temperature 500 °C | | | | Input rejected, the published limit does not change |
+
+LLM values assume good air from the forecast.
 
 ## Run the stages yourself
 

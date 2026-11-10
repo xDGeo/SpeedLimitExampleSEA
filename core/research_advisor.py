@@ -50,13 +50,14 @@ class ResearchAdvice:
     stopping_evidence: Confidence
     crash_evidence: Confidence
     air_evidence: Confidence
+    headline: str
     reasons: list
     caveats: list
     sources: list
 
     def summary(self) -> dict:
         return {
-            "limit_kmh": self.limit_kmh, "reduction_kmh": self.reduction_kmh, "surface": self.surface,
+            "limit_kmh": self.limit_kmh, "headline": self.headline, "surface": self.surface,
             "friction": self.friction, "dark": self.dark, "available_distance_m": self.available_distance_m,
             "stress_limit_kmh": self.stress_limit_kmh, "stopping_evidence": asdict(self.stopping_evidence),
             "crash_evidence": asdict(self.crash_evidence),
@@ -178,6 +179,21 @@ def _air_finding(air):
     return Confidence(LOW, reasons), note
 
 
+SURFACE_NAMES = {DRY: "Dry road", WET: "Wet road", BLACK_ICE: "Black ice"}
+
+
+def _headline(surface, dark, available, limit, air_note) -> str:
+    """One short justification for the panel."""
+    conditions = f"{SURFACE_NAMES[surface]} in {'darkness' if dark else 'daylight'}"
+    if limit == config.DEFAULT_LIMIT:
+        text = f"{conditions}: 80 km/h can stop within the {available:g} m available."
+    else:
+        text = f"{conditions}: {limit} km/h is the fastest limit that can stop within {available:g} m."
+    if air_note:
+        text += " Air quality alone does not justify going below 80 km/h."
+    return text
+
+
 def _reasons(surface, friction, dark, available, limit, stress_limit, candidates, air_note) -> list:
     sight = "low-beam detection distance" if dark else "design stopping distance for 80 km/h"
     chosen = next(c for c in candidates if c.limit_kmh == limit)
@@ -233,6 +249,7 @@ def advise(readings: dict, air=None) -> ResearchAdvice:
     return ResearchAdvice(
         limit, config.DEFAULT_LIMIT - limit, surface, friction, dark, available, stress_limit, candidates,
         _stopping_evidence(surface, dark), _crash_evidence(limit), air_evidence,
+        _headline(surface, dark, available, limit, air_note),
         _reasons(surface, friction, dark, available, limit, stress_limit, candidates, air_note),
         list(CAVEATS), _sources(surface, dark, air_evidence),
     )

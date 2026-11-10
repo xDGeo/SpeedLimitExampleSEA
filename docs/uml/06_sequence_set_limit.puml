@@ -20,7 +20,7 @@ participant "Decider" as Decider
 participant "Research\nAdvisor" as Research
 database "decisions\n.jsonl" as Log
 
-Operator -> GUI : enter readings, press "Set limit now"\n(or auto-run timer fires)
+Operator -> GUI : enter readings, press "Calculate"\n(or auto-run timer fires)
 GUI -> Cycle : run(readings)
 Cycle -> Guard : validate_readings(readings)
 alt input invalid

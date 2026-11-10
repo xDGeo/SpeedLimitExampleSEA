@@ -141,3 +141,21 @@ def test_sources_are_cited_with_links():
 def test_reasons_show_units():
     text = " ".join(ra.advise(DAY_ICE).reasons)
     assert "km/h" in text and " m" in text
+
+
+@pytest.mark.parametrize("readings, words", [
+    (DAY_READINGS, ["Dry road in daylight", "80 km/h", "128 m"]),
+    (NIGHT_READINGS, ["Dry road in darkness", "80 km/h", "91 m"]),
+    (NIGHT_WET, ["Wet road in darkness", "70 km/h", "91 m"]),
+    (DAY_ICE, ["Black ice in daylight", "50 km/h is the fastest limit that can stop within 128 m"]),
+    (NIGHT_ICE, ["Black ice in darkness", "40 km/h", "91 m"]),
+])
+def test_headline_is_one_short_justification(readings, words):
+    headline = ra.advise(readings).headline
+    assert all(word in headline for word in words)
+    assert len(headline) < 160
+
+
+def test_headline_mentions_air_quality_when_poor():
+    assert "Air quality alone does not justify going below 80 km/h" in ra.advise(DAY_READINGS, air=POOR_AIR).headline
+    assert "Air quality" not in ra.advise(DAY_READINGS, air=GOOD_AIR).headline

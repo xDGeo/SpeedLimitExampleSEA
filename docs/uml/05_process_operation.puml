@@ -7,7 +7,7 @@ skinparam ActivityDiamondBackgroundColor #FFF4D6
 |GUI / Scheduler|
 start
 :Timer fires or operator
-presses "Set limit now";
+presses "Calculate";
 :Collect readings with units;
 
 |InputGuardrail|
