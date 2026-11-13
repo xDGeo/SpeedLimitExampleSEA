@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SpeedLimit Management Review</title>
+<title>SpeedLimit Case Study</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -191,19 +191,56 @@ body.show-notes #notes { display: block; }
   }
   #progress, #notes, #hint { display: none !important; }
 }
+
+/* ---------- chapter tracker ---------- */
+.chap { position: absolute; top: 26px; right: 96px; display: flex; gap: 8px; align-items: center; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.chap span { padding: 6px 10px; border-radius: 999px; }
+.chap span.done { color: var(--muted); }
+.chap span.on { color: #0A0C0F; background: var(--accent); }
+.chap i { width: 14px; height: 1px; background: var(--line); }
+
+/* ---------- new atoms ---------- */
+.cond { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.cond .card { display: flex; flex-direction: column; min-height: 400px; padding: 30px 28px; }
+.cond svg { margin-bottom: 26px; }
+.cond h3 { font-size: 30px; margin-bottom: 8px; }
+.cond .who-dec { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); }
+.cond .who-dec .k { font: 600 13px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.cond .who-dec .v { margin-top: 8px; font: 600 24px/1.2 var(--display); color: var(--accent); }
+.cond .card.plain .who-dec .v { color: var(--text); }
+.sh { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.sh .card { padding: 32px 30px; min-height: 196px; display: flex; flex-direction: column; }
+.sh h3 { font-size: 28px; margin-bottom: 8px; }
+.sh .small { font-size: 20px; }
+.sh .to { margin-top: auto; padding-top: 18px; font-size: 17px; }
+.sh .to { display: inline-flex; gap: 8px; align-items: center; font: 600 15px/1 var(--display); color: var(--accent); }
+.req { display: flex; gap: 22px; align-items: baseline; padding: 26px 0; border-bottom: 1px solid var(--line); }
+.req .id { font: 600 18px/1 var(--display); color: var(--accent); min-width: 62px; letter-spacing: .02em; }
+.req .tx { font: 600 25px/1.3 var(--display); }
+.req .tx span { display: block; margin-top: 4px; font: 400 18px/1.4 var(--body); color: var(--muted); }
+.req.sm { padding: 21px 0; }
+.req.sm .tx { font-size: 24px; }
+.nfr { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.nfr .card { padding: 26px 26px 28px; min-height: 196px; }
+.nfr h3 { font-size: 24px; }
+table.t td.acc { color: var(--accent); font-family: var(--display); font-weight: 600; white-space: nowrap; }
+table.t.lg td { padding-top: 17px; padding-bottom: 17px; }
+.newtag { margin-left: 8px; font: 600 11px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); border: 1px solid var(--line); border-radius: 999px; padding: 4px 7px; vertical-align: 3px; }
+.law.tight { padding: 10px 0; font-size: 19px; }
+.law.tight .a { color: var(--accent); }
+.law.tight .s { min-width: 96px; text-align: center; }
 </style>
 </head>
 <body>
 <div id="progress"></div>
 <main class="deck" id="deck">
 
-<!-- ===================================================== 1 TITLE -->
 <section class="slide s-title" data-label="Title">
   <div class="content">
     <div style="flex:1">
-      <div class="kicker">Software Engineering for AI · Final management review</div>
+      <div class="kicker">Software Engineering for AI · Case study</div>
       <h1>SpeedLimit</h1>
-      <p class="sub">An AI-assisted highway speed limit: engineered properly, but not yet ready to decide on its own.</p>
+      <p class="sub">A highway speed limit that reacts to light, weather and air quality.</p>
       <div class="who">
         <div><b>Gheorghe Tutunaru</b>Presenter</div>
         <div><b>Mihail Lupasco</b>Presenter</div>
@@ -218,143 +255,392 @@ body.show-notes #notes { display: block; }
     </svg>
   </div>
   <aside class="notes">
-    <p>Good morning. We are Gheorghe Tutunaru and Mihail Lupasco, and this is our final review of SpeedLimit, the case study from Software Engineering for AI.</p>
-    <p>The highway operator asked for a system that sets the speed limit automatically: lower it when it is dark or icy, lower it when air quality is poor, and otherwise keep 80 km/h. Over the semester we did every exercise on this project: requirements, a legal check, data preparation, architecture, testing, human-in-the-loop design and a retraining decision. We also built a working MVP with a neural network, a local LLM and a GUI for the control room.</p>
-    <p>We give you the answer first, then the evidence behind it, and we finish with what we learned and what we recommend you fund next. Remember the sign on the right, 60 km/h. It is what our system shows in every dark or icy hour today, and we will explain why.</p>
+    <p>Introduce yourselves: SE4AI case study SpeedLimit.</p>
+    <p>One sentence: we went through the whole course cycle on one project, from stakeholders to a tested, running system.</p>
+    <p>The 60 km/h sign comes back at the end. Keep it in mind.</p>
   </aside>
 </section>
 
-<!-- ===================================================== 2 EXEC SUMMARY -->
-<section class="slide" data-label="Executive summary">
-  <div class="kicker">Executive summary</div>
-  <h2 class="title">The MVP works end to end, but this data cannot support automatic speed limits</h2>
-  <div class="content col" style="justify-content:space-between">
-    <div class="row" style="gap:64px">
-      <div style="flex:1"><div class="big">335</div><p class="stat-label">automated tests, all passing</p></div>
-      <div style="flex:1"><div class="big">+0.4<span class="u">%</span></div><p class="stat-label">network skill over guessing the average (within noise)</p></div>
-      <div style="flex:1"><div class="big">0<span class="u">of 389</span></div><p class="stat-label">dark or icy hours in which any limit meets REQ1</p></div>
+<section class="slide" data-label="Roadmap">
+  <div class="kicker">Roadmap</div>
+  <h2 class="title">From stakeholders to a tested system, in six steps</h2>
+  <div class="content col" style="justify-content:center">
+    <div class="road" style="grid-template-columns:repeat(6,1fr);gap:18px">
+      <div class="r hl"><div class="n">01</div><h3>Context</h3><p>Problem<br>Stakeholders</p></div>
+      <div class="r hl"><div class="n">02</div><h3>Requirements</h3><p>REQ · SPEC · quality<br>Test cases</p></div>
+      <div class="r hl"><div class="n">03</div><h3>Data</h3><p>What we received<br>Cleaning, validation</p></div>
+      <div class="r hl"><div class="n">04</div><h3>Design</h3><p>Architecture<br>Network · LLM · GUI</p></div>
+      <div class="r hl"><div class="n">05</div><h3>Results</h3><p>Requirements check<br>Retraining</p></div>
+      <div class="r hl"><div class="n">06</div><h3>Wrap-up</h3><p>Use of AI<br>Lessons</p></div>
     </div>
-    <div class="card hl" style="display:flex;gap:40px;align-items:center;padding:30px 34px">
-      <div class="kicker" style="white-space:nowrap">Decision requested</div>
-      <p style="font-size:26px;line-height:1.4">Do not automate limits yet. <strong>Fund a data fix and a controlled road trial;</strong> <span class="muted">operators stay in charge meanwhile.</span></p>
+    <p class="lead" style="margin-top:64px">Each step builds on the one before: <strong>requirements become tests, tests check the design, and the results close the loop.</strong></p>
+  </div>
+  <aside class="notes">
+    <p>Walk the six steps left to right in one breath.</p>
+    <p>Key idea: requirements turn into tests before code exists, and at the end we check every requirement against those tests.</p>
+    <p>The tracker at the top of each slide shows where we are.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Problem" data-chapter="context">
+  <div class="kicker">Context · The problem</div>
+  <h2 class="title">Lower the limit when it is dark, icy or the air is poor; otherwise keep 80 km/h</h2>
+  <div class="content col" style="gap:30px">
+    <div class="cond">
+      <div class="card hl"><svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><path d="M46 8 A28 28 0 1 0 64 50 A23 23 0 1 1 46 8 Z" fill="#FFB224"/></svg><h3>Dark</h3><p class="small">Too little light on the road</p>
+        <div class="who-dec"><div class="k">Decided by</div><div class="v">Neural network</div></div></div>
+      <div class="card hl"><svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><g stroke="#FFB224" stroke-width="5" stroke-linecap="round"><line x1="36" y1="6" x2="36" y2="66"/><line x1="10" y1="21" x2="62" y2="51"/><line x1="10" y1="51" x2="62" y2="21"/><path d="M28 12 L36 20 L44 12 M28 60 L36 52 L44 60" fill="none"/></g></svg><h3>Black ice</h3><p class="small">Water on the road below 0 °C</p>
+        <div class="who-dec"><div class="k">Decided by</div><div class="v">Neural network</div></div></div>
+      <div class="card hl"><svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><g fill="none" stroke="#FFB224" stroke-width="5" stroke-linecap="round"><path d="M6 22 C16 14 24 30 34 22 S52 14 62 22"/><path d="M6 38 C16 30 24 46 34 38 S52 30 62 38"/><path d="M6 54 C16 46 24 62 34 54 S52 46 62 54"/></g></svg><h3>Poor air</h3><p class="small">Forecast from an API; no data to learn from</p>
+        <div class="who-dec"><div class="k">Decided by</div><div class="v">LLM</div></div></div>
+      <div class="card plain"><svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="33" fill="#F4F4F2"/><circle cx="36" cy="36" r="28" fill="none" stroke="#646B76" stroke-width="7"/><text x="36" y="45" text-anchor="middle" style="font:700 26px var(--display)" fill="#0A0C0F">80</text></svg><h3>None of these</h3><p class="small">Normal conditions</p>
+        <div class="who-dec"><div class="k">Decided by</div><div class="v">Rule: 80 km/h</div></div></div>
+    </div>
+    <div class="row" style="gap:14px;flex-wrap:wrap">
+      <span class="chip"><b>Given</b> 18 documented sensors</span>
+      <span class="chip">Hourly readings for one January</span>
+      <span class="chip">Accident and near-accident log</span>
+      <span class="chip">Year N+1 for the retraining decision</span>
     </div>
   </div>
   <aside class="notes">
-    <p>Here is the whole story on one slide.</p>
-    <p>First, the engineering works. The system runs end to end, from sensor readings to a published limit with reasons, and 335 automated tests cover it, all passing.</p>
-    <p>Second, the data cannot carry the core promise. The neural network is only 0.4 percent better than simply guessing the average number of near-accidents, which is within noise.</p>
-    <p>Third, as a direct result: in none of the 389 dark or icy hours in our data does any speed limit meet REQ1, the requirement of at most one near-accident per hour.</p>
-    <p>So we are not asking you to switch it on. Our recommendation is: do not let this system set speed limits automatically yet. Instead, fund two things: an investigation of the data, and a controlled trial on the road that produces data from which cause and effect can actually be learned. Until then, operators stay in charge, supported by expert rules. The rest of the talk shows why we are confident in this recommendation.</p>
+    <p>The highway operator's request, as given in the case study.</p>
+    <p>Dark or black ice: a neural network decides by how much to reduce, learned from past near-accidents.</p>
+    <p>Poor air: there is no data to learn from, so an LLM decides from a forecast API.</p>
+    <p>Nothing applies: the limit stays at 80 km/h.</p>
+    <p>What we received: sensor descriptions, one January of hourly readings, and an accident log.</p>
   </aside>
 </section>
 
-<!-- ===================================================== 3 PROBLEM -->
-<section class="slide" data-label="Problem">
-  <div class="kicker">The assignment</div>
-  <h2 class="title">Three rules set the limit, and REQ1 carries the hard promise: at most 1 near-accident per hour</h2>
-  <div class="content">
-    <div class="flow" style="width:1408px;height:420px">
-      <svg class="wires" width="1408" height="420" viewBox="0 0 1408 420">
-        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#646B76"/></marker>
-        <marker id="aha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FFB224"/></marker></defs>
-        <line x1="262" y1="80" x2="326" y2="80" stroke="#646B76" stroke-width="2" marker-end="url(#ah)"/>
-        <line x1="654" y1="80" x2="736" y2="80" stroke="#FFB224" stroke-width="2" marker-end="url(#aha)"/>
-        <text x="695" y="66" text-anchor="middle" fill="#FFB224" style="font:600 15px var(--display)">yes</text>
-        <line x1="262" y1="330" x2="736" y2="330" stroke="#646B76" stroke-width="2" marker-end="url(#ah)"/>
-        <path d="M1068,80 C1100,80 1100,170 1126,170" fill="none" stroke="#646B76" stroke-width="2" marker-end="url(#ah)"/>
-        <path d="M1068,330 C1100,330 1100,250 1126,250" fill="none" stroke="#646B76" stroke-width="2" marker-end="url(#ah)"/>
-        <path d="M490,158 L490,212" fill="none" stroke="#646B76" stroke-width="2" stroke-dasharray="5 5"/>
-        <text x="506" y="196" fill="#646B76" style="font:500 15px var(--body)">no: network not used</text>
-      </svg>
-      <div class="node plain" style="left:0;top:10px;width:262px;height:140px"><div class="k">Input</div><div class="h">Road sensors</div><div class="d">light, water, temperature, wind, humidity, traffic</div></div>
-      <div class="node plain" style="left:0;top:260px;width:262px;height:140px"><div class="k">Input · API</div><div class="h">Air-quality forecast</div><div class="d">PM10 and NO₂ in µg/m³</div></div>
-      <div class="node" style="left:328px;top:10px;width:326px;height:148px"><div class="k">Router · plain code</div><div class="h">Dark or black ice?</div><div class="d">Dark: &lt; 500 mlx (SPEC1)<br>Ice: &gt; 1000 µm water, &lt; 0 °C (SPEC2)</div></div>
-      <div class="node hl" style="left:738px;top:10px;width:330px;height:140px"><div class="k">REQ1 · Neural network</div><div class="h">≤ 1 near-accident per hour</div><div class="d">learns weather × limit → near-accidents (SPEC3)</div></div>
-      <div class="node" style="left:738px;top:260px;width:330px;height:140px"><div class="k">REQ2 · LLM</div><div class="h">Reduce for poor air</div><div class="d">“in an appropriate way”</div></div>
-      <div class="node" style="left:1128px;top:120px;width:280px;height:180px"><div class="k">REQ3 · Decider</div><div class="h">Strictest proposal wins</div><div class="d">no reason to reduce → 80 km/h</div></div>
+<section class="slide" data-label="Stakeholders" data-chapter="context">
+  <div class="kicker">Context · Stakeholders</div>
+  <h2 class="title">Sixteen groups care about the limit; six of them shape the requirements</h2>
+  <div class="content col" style="gap:26px">
+    <div class="sh">
+      <div class="card"><h3>Drivers, passengers</h3><p class="small">Safety, travel time</p><div class="to">→ REQ1, REQ3</div></div>
+      <div class="card"><h3>Residents, environment agency</h3><p class="small">Clean air</p><div class="to">→ REQ2</div></div>
+      <div class="card"><h3>Control-room operators</h3><p class="small">Stay in control</p><div class="to">→ REQ7 override</div></div>
+      <div class="card"><h3>Police, regulators</h3><p class="small">Traceable decisions</p><div class="to">→ REQ8 audit log</div></div>
+      <div class="card"><h3>Sensor maintenance</h3><p class="small">Safe behaviour on failure</p><div class="to">→ REQ6</div></div>
+      <div class="card"><h3>Data protection officer</h3><p class="small">No personal data</p><div class="to">→ Privacy</div></div>
     </div>
-    <div class="row" style="margin-top:34px;gap:16px">
-      <span class="chip"><b>SPEC4</b> near-accident = skidding, or too close to a car or the guardrail</span>
-    </div>
+    <p class="small">Also: operator management, ministry, EU AI Act authorities, navigation apps, API and LLM providers, developers, works council. Full list in the appendix.</p>
   </div>
   <aside class="notes">
-    <p>This is the problem as the operator gave it to us.</p>
-    <p>Readings from the road go into a Router. The Router is plain code, not AI. It applies the two definitions from the specification: it is dark below 500 millilux, and there is a danger of black ice with more than 1000 micrometres of water and a temperature below zero. Only if one of these holds does the neural network run. Its job is REQ1: pick a limit so that near-accidents stay at or below one per hour on average.</p>
-    <p>In parallel, an air-quality forecast from an API goes to an LLM, which may propose a reduction under REQ2. The Decider then takes the strictest proposal. If nobody proposes anything, REQ3 says 80 km/h.</p>
-    <p>SPEC3 says the network should learn how weather, the current limit and near-accidents are connected, and SPEC4 defines a near-accident as skidding or getting too close to another car or the guardrail.</p>
-    <p>Keep REQ1 in mind. It is a promise about outcomes on the road, and the rest of the talk is about whether data can keep that promise.</p>
+    <p>We started with who is affected. Sixteen groups in total.</p>
+    <p>Each card shows what the group wants and which requirement it leads to. That is the bridge to the next slide.</p>
+    <p>Worth mentioning: the works council, because operators could be monitored through the logs.</p>
   </aside>
 </section>
 
-<!-- ===================================================== 4 RE -->
-<section class="slide" data-label="Requirements engineering">
-  <div class="kicker">Requirements engineering</div>
-  <h2 class="title">Requirements analysis exposed ten ambiguities before any code was written</h2>
-  <div class="content col" style="gap:44px">
-    <div class="row" style="gap:40px">
-      <div style="flex:1"><div class="big mid">16</div><p class="stat-label">stakeholder groups, from drivers to the works council</p></div>
-      <div style="flex:1"><div class="big mid">10</div><p class="stat-label">natural-language errors found and fixed</p></div>
-      <div style="flex:1"><div class="big mid">5</div><p class="stat-label">system requirements added (REQ4–REQ8)</p></div>
-      <div style="flex:1"><div class="big mid">11</div><p class="stat-label">non-functional requirements</p></div>
-    </div>
-    <div class="grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="card"><span class="tag">Unit mismatch</span><h3>SPEC1 in millilux, sensors in lux</h3><p class="small">Converted in one place: the Router.</p></div>
-      <div class="card"><span class="tag">Undefined scope</span><h3>REQ1 “on average”: over what?</h3><p class="small">Road section and period still open.</p></div>
-      <div class="card"><span class="tag">Contradiction</span><h3>“Predicted” or “current” air?</h3><p class="small">We use the worst forecast of the next 6 h.</p></div>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>Before writing code we did the requirements exercises.</p>
-    <p>We identified sixteen stakeholder groups: drivers, control-room operators, police, regulators, the data protection officer, the EU AI Act authorities, and also the works council, which cares whether operators are monitored through the logs.</p>
-    <p>We found ten natural-language errors in the original requirements. Three examples. SPEC1 is in millilux while the sensors report lux, so we convert in exactly one place. REQ1 says "on average" but not over which period or which road section; that is still open and comes back in our recommendations. And REQ2 says "predicted" air quality while the project text says "current"; we use the worst forecast value of the next six hours.</p>
-    <p>We completed the requirements with REQ4 to REQ8: the strictest limit wins, the limit is recalculated at least hourly, a failure never silently publishes a higher limit, operators can always override, and every limit is logged with its reason. We also wrote eleven non-functional requirements, such as safety, auditability and privacy, plus assumptions and a glossary. The full lists are in the appendix.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 5 DATA -->
-<section class="slide" data-label="Data preparation">
-  <div class="kicker">Data preparation</div>
-  <h2 class="title">The files needed structural repairs; most of the expected value errors were absent</h2>
-  <div class="content row" style="gap:48px;align-items:flex-start">
-    <div style="width:700px;flex:0 0 700px">
-      <div class="paper"><img src="assets/uml_03_data_model.png" alt="Class diagram of the provided data: sensor types, sensors, readings, accident records"></div>
-      <p class="caption">Class diagram: accidents link to sensors only by day and hour.</p>
+<section class="slide" data-label="System requirements" data-chapter="req">
+  <div class="kicker">Requirements · System</div>
+  <h2 class="title">Three requirements were given; we added five to make them buildable</h2>
+  <div class="content row" style="gap:56px;align-items:flex-start">
+    <div style="flex:1">
+      <div class="kicker" style="color:var(--faint);margin-bottom:6px">Given by the operator</div>
+      <div class="req"><span class="id">REQ1</span><span class="tx">Dark or black ice → at most 1 near-accident per hour<span>The hard promise, and the network's job</span></span></div>
+      <div class="req"><span class="id">REQ2</span><span class="tx">Poor air predicted → reduce appropriately<span>The LLM's job</span></span></div>
+      <div class="req" style="border-bottom:0"><span class="id">REQ3</span><span class="tx">No reason to reduce → 80 km/h<span>A plain rule</span></span></div>
     </div>
     <div style="flex:1">
+      <div class="kicker" style="color:var(--faint);margin-bottom:6px">Added by us</div>
+      <div class="req sm"><span class="id">REQ4</span><span class="tx">Several reasons → the strictest limit wins</span></div>
+      <div class="req sm"><span class="id">REQ5</span><span class="tx">Recalculate at least once per hour</span></div>
+      <div class="req sm"><span class="id">REQ6</span><span class="tx">A failure never silently raises the limit</span></div>
+      <div class="req sm"><span class="id">REQ7</span><span class="tx">An operator can override at any time</span></div>
+      <div class="req sm" style="border-bottom:0"><span class="id">REQ8</span><span class="tx">Every limit is logged with its reason</span></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Left: the three requirements from the case study. REQ1 is the hard one: a measurable promise about the road.</p>
+    <p>Right: what was missing before anyone could build it. Two reasons at once? A failure? Who is in control? Each added requirement comes from a stakeholder on the previous slide.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Specifications" data-chapter="req">
+  <div class="kicker">Requirements · Specifications</div>
+  <h2 class="title">Specifications turn the requirements into exact, testable rules</h2>
+  <div class="content row" style="gap:52px;align-items:flex-start">
+    <table class="t lg" style="font-size:21px;flex:1.35">
+      <tr><th style="width:170px">Spec</th><th>Rule</th></tr>
+      <tr><td class="acc">SPEC1</td><td><strong>Dark</strong> when illuminance &lt; 500 mlx</td></tr>
+      <tr><td class="acc">SPEC2</td><td><strong>Black ice</strong> when water &gt; 1000 µm and temperature &lt; 0 °C</td></tr>
+      <tr><td class="acc">SPEC3</td><td>The network learns how weather and limit relate to near-accidents</td></tr>
+      <tr><td class="acc">SPEC4</td><td><strong>Near-accident</strong>: skidding, or too close to a car or the guardrail</td></tr>
+      <tr><td class="acc">SPEC5 <span class="newtag">new</span></td><td><strong>Air</strong>: worst PM10 and NO₂ forecast of the next 6 h, against EU limits 50 and 200 µg/m³</td></tr>
+      <tr><td class="acc">SPEC6 <span class="newtag">new</span></td><td><strong>Limits</strong>: 40 to 80 km/h in steps of 10</td></tr>
+    </table>
+    <div class="col" style="flex:1;gap:16px">
+      <div class="row" style="align-items:baseline;gap:16px"><div class="big sm">10</div><p class="small">language errors found in the given text, for example:</p></div>
+      <div class="card" style="padding:18px 22px"><span class="tag">Unit mismatch</span><p class="small"><strong>SPEC1 in millilux, sensors in lux.</strong> Converted once, in the Router.</p></div>
+      <div class="card" style="padding:18px 22px"><span class="tag">Undefined scope</span><p class="small"><strong>REQ1 “on average”: over what?</strong> Section and period still open.</p></div>
+      <div class="card" style="padding:18px 22px"><span class="tag">Contradiction</span><p class="small"><strong>“Predicted” or “current” air?</strong> We use the 6-hour forecast.</p></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>SPEC1 to SPEC4 are given. SPEC5 and SPEC6 are ours: what 'poor air' means, and which limits exist at all.</p>
+    <p>Reading the specs critically found ten language errors. Three examples on the right. The lux and millilux one would silently break the Router.</p>
+    <p>The open one, 'on average over what', comes back at the end.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Quality requirements" data-chapter="req">
+  <div class="kicker">Requirements · Quality</div>
+  <h2 class="title">Quality requirements: safe on failure, traceable, private</h2>
+  <div class="content col" style="justify-content:center">
+    <div class="nfr">
+      <div class="card hl"><span class="tag">Safety</span><h3>No failure raises the limit without review</h3></div>
+      <div class="card"><span class="tag">Auditability</span><h3>Every decision reconstructable for 5 years</h3></div>
+      <div class="card"><span class="tag">Privacy</span><h3>Licence plates never used</h3></div>
+      <div class="card"><span class="tag">Explainability</span><h3>Every AI result shows confidence and reasons</h3></div>
+      <div class="card"><span class="tag">Reliability</span><h3>One failed sensor cannot change the decision</h3></div>
+      <div class="card"><span class="tag">Security</span><h3>Only authenticated operators publish</h3></div>
+      <div class="card"><span class="tag">Latency</span><h3>New limit within 60 s of a reading</h3></div>
+      <div class="card"><span class="tag">Availability</span><h3>A limit is shown 99.99 % of the time</h3></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Eleven quality requirements in total; these are the eight that matter most.</p>
+    <p>Safety is highlighted because it drives the design: when anything fails, the system keeps the current limit or falls back, and asks a human.</p>
+    <p>Assumptions and the glossary are in the appendix.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Test cases" data-chapter="req">
+  <div class="kicker">Requirements · Test cases</div>
+  <h2 class="title">Every requirement became a test before the code existed</h2>
+  <div class="content row" style="gap:56px;align-items:flex-start">
+    <table class="t lg" style="font-size:21px;flex:1">
+      <tr><th style="width:110px">From</th><th>Test input</th><th>Expected</th></tr>
+      <tr><td class="acc">SPEC1</td><td>499 mlx · 500 mlx</td><td>dark · not dark</td></tr>
+      <tr><td class="acc">SPEC2</td><td>1001 µm at −1 °C · at 0 °C</td><td>black ice · no ice</td></tr>
+      <tr><td class="acc">REQ2</td><td>PM10 120, NO₂ 250 µg/m³</td><td>reduce by 20–30 km/h</td></tr>
+      <tr><td class="acc">REQ4</td><td>dark and poor air together</td><td>the stricter limit</td></tr>
+      <tr><td class="acc">REQ6</td><td>impossible sensor value</td><td>keep the current limit</td></tr>
+      <tr><td class="acc">REQ7</td><td>operator publishes 50 km/h</td><td>published and logged</td></tr>
+      <tr><td class="acc">Privacy</td><td>load the accident file</td><td>no licence plates left</td></tr>
+    </table>
+    <div class="col" style="width:380px;flex:0 0 380px;gap:30px">
+      <div><div class="big">335</div><p class="stat-label">automated tests, written test-first</p></div>
+      <div class="rule"></div>
+      <p class="body"><strong>At least 5 per component.</strong> The Router alone has 18, mostly exact boundaries.</p>
+      <p class="body"><strong>An architecture test</strong> fails on any forbidden import.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>This is where requirements meet code. Each row is a test we wrote before the implementation, then watched fail, then made pass.</p>
+    <p>The boundaries matter most: exactly 500 millilux is not dark, exactly 0 °C is not below zero.</p>
+    <p>335 tests in total: 330 run offline, 5 ask the real local LLM. Full Router and LLM test tables are in the appendix.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Data" data-chapter="data">
+  <div class="kicker">Data · What we received</div>
+  <h2 class="title">The data needed structural repairs, not much cleaning</h2>
+  <div class="content row" style="gap:48px;align-items:flex-start">
+    <div style="width:680px;flex:0 0 680px">
+      <div class="paper"><img src="assets/uml_03_data_model.png" alt="Class diagram of the provided data: sensor types, sensors, readings, accident records"></div>
+      <p class="caption">Accidents link to sensor readings only by day and hour.</p>
+    </div>
+    <div class="col" style="flex:1;gap:28px">
       <table class="t" style="font-size:19px">
-        <tr><th>Found</th><th>Handled by</th></tr>
+        <tr><th>Found</th><th>Handled</th></tr>
         <tr><td>Type “T” = temperature <em>and</em> traffic</td><td>Sensor 16 is traffic</td></tr>
         <tr><td>Sensor 19 undocumented</td><td>Treated as temperature</td></tr>
-        <tr><td>Sensors 7, 10, 17 empty</td><td>Not used</td></tr>
+        <tr><td>Sensors 7, 10, 17 never report</td><td>Not used</td></tr>
         <tr><td>Accident hours 1–24, sensors 0–23</td><td>Shift by one hour</td></tr>
-        <tr><td>Year N+1 file has no header</td><td>Loader detects it</td></tr>
-        <tr><td>Licence plates</td><td>Dropped at load (privacy)</td></tr>
+        <tr><td>Licence plates</td><td>Dropped at load</td></tr>
       </table>
-      <div class="row" style="margin-top:30px;align-items:center;gap:22px">
-        <div class="big sm">0.009<span class="u">°C</span></div>
-        <p class="small" style="max-width:300px">mean temperature error after cleaning a copy with injected faults</p>
+      <div class="row" style="gap:40px">
+        <div><div class="big sm white">744<span class="u">h</span></div><p class="stat-label">complete hours after cleaning</p></div>
+        <div><div class="big sm">9<span class="u">of 9</span></div><p class="stat-label">validation checks pass before training</p></div>
       </div>
     </div>
   </div>
   <aside class="notes">
-    <p>The class diagram on the left shows the data we received: sensor types, sensors, readings, and a separate accident file. Accidents are not linked to sensors at all; they are joined only by day and hour.</p>
-    <p>The course slides listed many value errors: spikes, empty values, "NULL" months, duplicates. Most of them are not in these files. What we did find were structural problems. Sensor type T means both temperature and traffic, and sensor 16 is the traffic one. Sensor 19 has readings but no description and behaves like a temperature sensor. Sensors 7, 10 and 17 are described but never report. Accident hours run 1 to 24 while sensor hours run 0 to 23, so we shift by one hour. The Year N+1 file has no header. And licence plates are personal data, so we drop them on load.</p>
-    <p>Our cleaner still handles every listed value error. We injected them into a copy, and after cleaning the temperature was off by only 0.009 degrees on average. This is the development exercise: code that repairs the data and produces one clean row per hour, ready for the network.</p>
+    <p>The class diagram shows what we received. Note that accidents and sensors only meet through day and hour.</p>
+    <p>The problems were structural, not dirty values: an ambiguous sensor type, an undocumented sensor, three silent sensors, hours shifted by one, and personal data.</p>
+    <p>The value errors listed in the course slides are not in this version of the files, but the cleaner still handles them. A validation gate checks nine things before training is allowed to start.</p>
   </aside>
 </section>
 
-<!-- ===================================================== 6 VALIDATION -->
-<section class="slide" data-label="Data validation">
-  <div class="kicker">Data validation</div>
-  <h2 class="title">The data is clean but carries almost no signal: every limit averages above 1 near-accident per hour</h2>
-  <div class="content row" style="gap:56px;align-items:flex-start">
-    <div class="col" style="width:380px;flex:0 0 380px;gap:34px">
-      <div><div class="big sm white">9<span class="u">of 9</span></div><p class="stat-label">hard validation checks pass</p></div>
-      <div><div class="big sm">1.00</div><p class="stat-label">variance / mean of hourly counts: pure randomness</p></div>
-      <div><div class="big sm">r = 0.003</div><p class="stat-label">same hours, identical sensors, Year N vs. N+1</p></div>
+<section class="slide" data-label="Architecture" data-chapter="design">
+  <div class="kicker">Design · Architecture</div>
+  <h2 class="title">Plain-code rules decide when the AI is used</h2>
+  <div class="content col" style="gap:22px">
+    <div class="paper" style="padding:10px 14px;width:1180px;align-self:center"><img src="assets/uml_01_architecture_operational.png" alt="Operational architecture: components and allowed-to-use relations"></div>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:22px">
+      <div class="card hl" style="padding:20px 24px"><span class="tag">Router</span><p class="small"><strong>Plain code applies SPEC1 and SPEC2</strong> and decides whether the network runs.</p></div>
+      <div class="card" style="padding:20px 24px"><span class="tag">LLM boundary</span><p class="small"><strong>Only the LLMManager</strong> may reach the LLM, through its guardrails and log.</p></div>
+      <div class="card" style="padding:20px 24px"><span class="tag">Enforced</span><p class="small"><strong>An architecture test fails</strong> if any import breaks the allowed-to-use rules.</p></div>
     </div>
-    <div style="flex:1">
-      <svg width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Near-accidents per hour by speed limit, dark or black-ice hours, with 95 percent intervals">
+  </div>
+  <aside class="notes">
+    <p>The operational architecture. The GUI or a timer starts one cycle; the orchestrator calls every component in a fixed order.</p>
+    <p>Router and Decider are plain code, because SPEC1, SPEC2 and REQ3 are exact rules. The AI only supplies values.</p>
+    <p>Only the LLMManager may reach the LLM. A test checks every import against this diagram.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Neural network" data-chapter="design">
+  <div class="kicker">Design · Neural network</div>
+  <h2 class="title">The network: nine inputs in, near-accidents per hour out</h2>
+  <div class="content col" style="gap:30px">
+    <div class="row" style="gap:28px;align-items:center;height:392px">
+      <div style="width:400px;flex:0 0 400px">
+        <div class="kicker" style="color:var(--faint);margin-bottom:12px">9 inputs, sensor medians</div>
+        <div class="col" style="gap:7px" id="feat-list">
+          <span class="chip" style="border-color:var(--accent-line)"><b>Speed limit</b> km/h, what we control</span>
+          <span class="chip">log illuminance (lux)</span>
+          <span class="chip">Water on road (µm) · Temperature (°C)</span>
+          <span class="chip">Wind (km/h) · Humidity (%)</span>
+          <span class="chip">Traffic (cars/s)</span>
+          <span class="chip">Dark? (SPEC1) · Black ice? (SPEC2)</span>
+        </div>
+      </div>
+      <svg id="nn" width="470" height="392" viewBox="0 0 470 392" aria-label="Network with 9, 16, 8 and 1 nodes"></svg>
+      <div style="flex:1">
+        <div class="kicker" style="color:var(--faint);margin-bottom:12px">Predicted attribute</div>
+        <p style="font:600 30px/1.2 var(--display)">Near-accidents per hour</p>
+        <p class="small" style="margin-top:10px">for each candidate limit: 40, 50, 60, 70 km/h</p>
+        <div class="rule" style="margin:22px 0"></div>
+        <p class="small"><strong>10 networks</strong> (ensemble)<br>9 → 16 → 8 → 1, Poisson loss</p>
+      </div>
+    </div>
+    <div>
+      <div style="display:flex;height:44px;border-radius:10px;overflow:hidden;font:600 16px/44px var(--display)">
+        <div style="flex:21;background:#2A2F37;padding-left:16px">Train · days 1–21 · 275 h</div>
+        <div style="flex:5;background:#3A404A;padding-left:14px">Valid. · 22–26 · 54 h</div>
+        <div style="flex:5;background:var(--accent);color:#0A0C0F;padding-left:14px">Test · 27–31 · 60 h</div>
+      </div>
+      <p class="caption">Split by whole days, plus 20-fold cross-validation grouped by day.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Nine inputs. The speed limit is the one we control; the rest describe the conditions. Redundant sensors are combined by their median.</p>
+    <p>Output: expected near-accidents per hour, asked once for each candidate limit from 40 to 70 km/h.</p>
+    <p>Ten small networks with Poisson loss, trained only on the 389 dark or icy hours. The split is by whole days, so no day leaks between training and test.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="LLM for air quality" data-chapter="design">
+  <div class="kicker">Design · LLM for air quality</div>
+  <h2 class="title">The LLM: numbers in, one of five allowed answers out</h2>
+  <div class="content col" style="gap:34px">
+    <div class="pipe">
+      <div class="p"><div class="k">Forecast API</div><div class="h">Worst PM10, NO₂</div><div class="d">next 6 h, µg/m³</div></div>
+      <div class="arr">→</div>
+      <div class="p"><div class="k">Input guardrail</div><div class="h">Numbers only</div><div class="d">0–2,000 µg/m³; nothing to inject</div></div>
+      <div class="arr">→</div>
+      <div class="p hl"><div class="k">Local LLM</div><div class="h">qwen3:8b, asked 3×</div><div class="d">different seeds, on this machine</div></div>
+      <div class="arr">→</div>
+      <div class="p"><div class="k">Output guardrail</div><div class="h">0, 10, 20, 30, 40</div><div class="d">km/h reduction, else rejected</div></div>
+      <div class="arr">→</div>
+      <div class="p"><div class="k">Confidence</div><div class="h">Majority vote</div><div class="d">agreement = consistency, not correctness</div></div>
+    </div>
+    <p class="small" style="margin-top:-14px">No valid answer → rule-based fallback and an operator review flag.</p>
+    <div class="row" style="gap:64px;margin-top:6px">
+      <div><div class="big mid">3×</div><p class="stat-label">asked per decision; the majority wins</p></div>
+      <div><div class="big mid">0<span class="u">bytes</span></div><p class="stat-label">leave the machine: qwen3:8b runs locally</p></div>
+      <div><div class="big mid">5<span class="u">of 5</span></div><p class="stat-label">golden test cases in the expected range</p></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>REQ2 with SPEC5. The forecast comes from Open-Meteo; we take the worst PM10 and NO₂ of the next six hours.</p>
+    <p>We treat the LLM as untrusted. Only numbers go in, so nothing can be injected. Only 0, 10, 20, 30 or 40 km/h may come out.</p>
+    <p>Three answers, majority wins. Agreement shows consistency, not correctness. No valid answer: a rule-based fallback and a review flag.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="One cycle" data-chapter="design">
+  <div class="kicker">Design · One cycle</div>
+  <h2 class="title">One cycle, as the operator sees it</h2>
+  <div class="content row" style="gap:52px;align-items:flex-start">
+    <ol class="steps" style="flex:1">
+      <li>Guardrail checks inputs</li>
+      <li>Router: dark or icy?</li>
+      <li>Network rates 40–70 km/h</li>
+      <li>LLM rates air quality</li>
+      <li>Decider: strictest, else 80 km/h</li>
+      <li>Audit log; operator may override</li>
+    </ol>
+    <div style="width:760px;flex:0 0 760px">
+      <div class="shot"><img src="assets/gui_recommendation.png" alt="SpeedLimit GUI after an icy-night calculation: recommended 60 km/h, REQ1 not met, operator review needed"></div>
+      <p class="caption">The running GUI, “icy night” scenario: 60 km/h, REQ1 not met, operator review requested.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Six steps, quickly, left to right in the list.</p>
+    <p>On the right is the running GUI on an icy night: 60 km/h, a review banner, the network at Low confidence, and the LLM card.</p>
+    <p>The operator can publish another limit at any time, and the override is logged. That is REQ7 and REQ8 in practice.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Network result" data-chapter="results">
+  <div class="kicker">Results · The network</div>
+  <h2 class="title">The network predicts no better than the average</h2>
+  <div class="content row" style="gap:56px;align-items:flex-start">
+    <div class="col" style="width:330px;flex:0 0 330px;gap:30px">
+      <div><div class="big">+0.4<span class="u">%</span></div><p class="stat-label">cross-validated skill over always guessing the average</p></div>
+      <div class="rule"></div>
+      <div><div class="big sm white">1.00</div><p class="stat-label">variance / mean of hourly counts: pure chance</p></div>
+      <div><div class="big sm white">r = 0.003</div><p class="stat-label">same conditions in Year N and N+1, unrelated counts</p></div>
+    </div>
+    <div class="col" style="flex:1;gap:26px">
+      <svg width="920" height="250" viewBox="0 0 920 250" role="img" aria-label="Skill on single split and cross-validation">
+        <!-- x(v)=330+(v+5)*52 : -5..+6 -->
+        <g stroke="#272C34"><line x1="382" y1="20" x2="382" y2="190"/><line x1="486" y1="20" x2="486" y2="190"/><line x1="798" y1="20" x2="798" y2="190"/></g>
+        <line x1="590" y1="14" x2="590" y2="190" stroke="#A0A6AF" stroke-width="2"/>
+        <line x1="694" y1="14" x2="694" y2="190" stroke="#FFB224" stroke-width="2.5" stroke-dasharray="8 6"/>
+        <text x="702" y="30" fill="#FFB224" style="font:600 15px var(--display)">+2 % needed for Medium</text>
+        <text x="582" y="30" text-anchor="end" fill="#A0A6AF" style="font:500 15px var(--body)">0 = guessing the average</text>
+        <text x="0" y="78" fill="#EEEFF1" style="font:600 19px var(--display)">Single test split</text>
+        <text x="0" y="100" fill="#646B76" style="font:500 15px var(--body)">days 27–31</text>
+        <circle cx="678.4" cy="82" r="9" fill="#EEEFF1"/>
+        <text x="664" y="88" text-anchor="end" class="num" fill="#EEEFF1" style="font-size:19px">+1.7 %</text>
+        <text x="0" y="148" fill="#EEEFF1" style="font:600 19px var(--display)">Cross-validated</text>
+        <text x="0" y="170" fill="#646B76" style="font:500 15px var(--body)">20 folds, range shown</text>
+        <line x1="423.6" y1="152" x2="834.4" y2="152" stroke="#FFB224" stroke-width="3"/>
+        <line x1="423.6" y1="142" x2="423.6" y2="162" stroke="#FFB224" stroke-width="3"/>
+        <line x1="834.4" y1="142" x2="834.4" y2="162" stroke="#FFB224" stroke-width="3"/>
+        <circle cx="610.8" cy="152" r="10" fill="#FFB224"/>
+        <text x="602" y="185" text-anchor="start" class="num" fill="#FFB224" style="font-size:19px">+0.4 %</text>
+        <text x="423.6" y="134" text-anchor="middle" class="num" fill="#A0A6AF" style="font-size:16px">−3.2 %</text>
+        <text x="834.4" y="134" text-anchor="middle" class="num" fill="#A0A6AF" style="font-size:16px">+4.7 %</text>
+        <g fill="#646B76" style="font:500 15px var(--body)" text-anchor="middle">
+          <text x="382" y="212">−4 %</text><text x="486" y="212">−2 %</text><text x="590" y="212">0 %</text><text x="694" y="212">+2 %</text><text x="798" y="212">+4 %</text>
+        </g>
+        <text x="590" y="240" text-anchor="middle" fill="#A0A6AF" style="font:500 15px var(--body)">Skill vs. constant predictor (% lower Poisson deviance)</text>
+      </svg>
+      <div class="card hl" style="padding:22px 28px"><span class="tag">Control test</span><p style="font-size:22px;line-height:1.45">With a planted signal, the same code learns it. <strong>The limit is the data, not the code.</strong></p></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Skill means: how much better than always guessing the average number of near-accidents.</p>
+    <p>One test split looked like +1.7 %. Across 20 folds it is +0.4 %, ranging from −3.2 to +4.7. That is noise.</p>
+    <p>Why: the hourly counts behave like pure chance, and identical conditions in two years give unrelated counts.</p>
+    <p>A control test plants a real signal, and the same code finds it. So the code works; the data has nothing to say about speed.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Requirements check" data-chapter="results">
+  <div class="kicker">Results · Requirements check</div>
+  <h2 class="title">Every requirement is met and tested, except REQ1</h2>
+  <div class="content row" style="gap:52px;align-items:flex-start">
+    <div style="width:620px;flex:0 0 620px">
+      <div class="law tight"><span class="a">REQ1</span><span class="w">≤ 1 near-accident/h<span>every limit averages above 1/h</span></span><span class="s nok">Not met</span></div>
+      <div class="law tight"><span class="a">REQ2</span><span class="w">Reduce for poor air<span>5 of 5 golden cases in range</span></span><span class="s ok">Tested</span></div>
+      <div class="law tight"><span class="a">REQ3</span><span class="w">Otherwise 80 km/h</span><span class="s ok">Tested</span></div>
+      <div class="law tight"><span class="a">REQ4</span><span class="w">Strictest limit wins</span><span class="s ok">Tested</span></div>
+      <div class="law tight"><span class="a">REQ5</span><span class="w">Recalculate hourly</span><span class="s ok">Tested</span></div>
+      <div class="law tight"><span class="a">REQ6</span><span class="w">Failure never raises the limit</span><span class="s ok">Tested</span></div>
+      <div class="law tight"><span class="a">REQ7</span><span class="w">Operator override</span><span class="s ok">Tested</span></div>
+      <div class="law tight"><span class="a">REQ8</span><span class="w">Logged with reason</span><span class="s ok">Tested</span></div>
+      <div class="law tight" style="border-bottom:0"><span class="a">Privacy</span><span class="w">No licence plates</span><span class="s ok">Tested</span></div>
+    </div>
+    <div class="col" style="flex:1;gap:14px">
+      <svg width="720" height="416" viewBox="0 0 900 520" role="img" aria-label="Near-accidents per hour by speed limit, dark or black-ice hours, with 95 percent intervals">
         <g stroke="#272C34" stroke-width="1">
           <line x1="110" y1="440" x2="880" y2="440"/>
           <line x1="110" y1="327" x2="880" y2="327"/>
@@ -398,169 +684,299 @@ body.show-notes #notes { display: block; }
           </g>
         </g>
       </svg>
-      <p class="caption" style="margin-top:4px">Dark or black-ice hours, Year N. Whiskers: 95% interval. Lower limits look riskier only through noise or confounding.</p>
+      <div class="card hl" style="padding:18px 24px"><span class="tag">So, in every dark or icy hour</span><p style="font-size:21px;line-height:1.4"><strong>60 km/h and an operator review.</strong> <span class="muted">60 has the most evidence: 230 hours.</span></p></div>
     </div>
   </div>
   <aside class="notes">
-    <p>Before training, a validation gate checks the cleaned table. All nine hard checks pass: 744 complete hours, no missing or out-of-range values, labels that reconcile with the source, and redundant sensors that agree. So the data is fit for use.</p>
-    <p>The problem is what it contains. Near-accident counts per hour have a variance-to-mean ratio of exactly 1.00, the signature of pure Poisson randomness. And Year N+1 has the same sensor readings as Year N, yet near-accident counts in the same hours do not correlate at all: r is 0.003. If conditions drove near-accidents, identical conditions should give similar counts.</p>
-    <p>The chart shows near-accidents per hour in dark or icy hours at each limit, with 95 percent intervals. Every limit is above the REQ1 line of one per hour. Lower limits even look riskier, but 40 km/h has only seven hours of evidence, the intervals overlap heavily, and lower limits are probably set when conditions are worst. That is noise or confounding, not proof that driving slower is dangerous. But a network will learn it anyway, and you will see that on slide 11.</p>
+    <p>Back to the requirements from the start. REQ2 to REQ8 and privacy are each covered by passing tests.</p>
+    <p>REQ1 is not met. The chart shows near-accidents per hour in dark or icy hours: every limit is above the dashed line of 1 per hour. Lower limits even look riskier, but 40 km/h has only 7 hours of data; that is noise or confounding.</p>
+    <p>So no limit is predicted to meet REQ1, in any of the 389 hours. The system then uses a fixed 60 km/h, the limit with the most evidence, and asks the operator to review. That is the 60 from the title slide.</p>
   </aside>
 </section>
 
-<!-- ===================================================== 7 ARCHITECTURE -->
-<section class="slide" data-label="Architecture">
-  <div class="kicker">Architecture · SpeedLimit21</div>
-  <h2 class="title">Plain-code rules gate the AI, and a test enforces which of the 18 components may use which</h2>
-  <div class="content col" style="gap:22px">
-    <div class="paper" style="padding:10px 14px;width:1180px;align-self:center"><img src="assets/uml_01_architecture_operational.png" alt="Operational architecture: components and allowed-to-use relations"></div>
-    <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:22px">
-      <div class="card hl" style="padding:20px 24px"><span class="tag">Router</span><p class="small"><strong>Plain code applies SPEC1 and SPEC2</strong> and decides whether the network runs at all.</p></div>
-      <div class="card" style="padding:20px 24px"><span class="tag">LLM boundary</span><p class="small"><strong>Only the LLMManager</strong> may reach the LLM, through its guardrails and log.</p></div>
-      <div class="card" style="padding:20px 24px"><span class="tag">Enforced</span><p class="small"><strong>An architecture test fails</strong> if any import breaks the allowed-to-use rules.</p></div>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>This is the operational architecture with its allowed-to-use relations. The GUI and its timer call the CycleOrchestrator, which calls each component in a fixed order.</p>
-    <p>The key design choice is that the Router and the Decider are plain code. SPEC1, SPEC2 and REQ3 are exact rules, so a model would only add risk. The Router decides whether the network is used at all. The orchestration is static: we fixed the steps at design time, and the network and the LLM only supply values. A safety-related decision should not depend on an agent choosing its own next step.</p>
-    <p>There are eighteen components in total, each with a one-sentence responsibility. The allowed-to-use specification is more than a diagram: a test reads the imports of every module and fails if, for example, anything other than the LLMManager tries to reach the LLM.</p>
-    <p>Training has its own architecture diagram, in the appendix. Both stages share the same FeatureBuilder, so training and live inputs cannot drift apart.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 8 ONE CYCLE -->
-<section class="slide" data-label="One decision">
-  <div class="kicker">Operation · one cycle</div>
-  <h2 class="title">Every cycle ends with a limit, its reasons, and an operator who can override it</h2>
-  <div class="content row" style="gap:52px;align-items:flex-start">
-    <ol class="steps" style="flex:1">
-      <li>Guardrail checks inputs</li>
-      <li>Router: dark or icy?</li>
-      <li>Network rates 40–70 km/h</li>
-      <li>LLM rates air quality</li>
-      <li>Decider: strictest, else 80 km/h</li>
-      <li>Audit log; operator may override</li>
-    </ol>
-    <div style="width:760px;flex:0 0 760px">
-      <div class="shot"><img src="assets/gui_recommendation.png" alt="SpeedLimit GUI after an icy-night calculation: recommended 60 km/h, REQ1 not met, operator review needed"></div>
-      <p class="caption">The running GUI, “icy night” scenario: 60 km/h, REQ1 not met, operator review requested.</p>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>Here is one decision, step by step. The full sequence diagram is in the appendix.</p>
-    <p>The operator enters readings, or the timer fires. An input guardrail rejects impossible values, and a rejected cycle keeps the current limit. The Router checks for darkness and black ice. If either applies, the FeatureBuilder creates one row for each candidate limit from 40 to 70 km/h, and the ensemble predicts near-accidents for each. Separately, the LLM looks at the air-quality forecast. The Decider takes the stricter proposal, or 80 km/h. Everything goes into an audit log.</p>
-    <p>On the right is the real GUI in the icy-night scenario. The recommendation is 60 km/h, and a yellow banner says REQ1 is not met and operator review is needed. Below it you see the network at Low confidence, the LLM at 80 km/h with High agreement because the air is clean, and, for comparison only, what published research would suggest: 40 km/h. The operator can publish a different limit at any time, and the override is logged.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 9 FEATURES & NN -->
-<section class="slide" data-label="Features and network">
-  <div class="kicker">Feature engineering and model</div>
-  <h2 class="title">A small network learns from nine inputs, trained only on the 389 hours where it is used</h2>
-  <div class="content col" style="gap:30px">
-    <div class="row" style="gap:28px;align-items:center;height:392px">
-      <div style="width:400px;flex:0 0 400px">
-        <div class="kicker" style="color:var(--faint);margin-bottom:12px">9 inputs, sensor medians</div>
-        <div class="col" style="gap:7px" id="feat-list">
-          <span class="chip" style="border-color:var(--accent-line)"><b>Speed limit</b> km/h, what we control</span>
-          <span class="chip">log illuminance (lux)</span>
-          <span class="chip">Water on road (µm) · Temperature (°C)</span>
-          <span class="chip">Wind (km/h) · Humidity (%)</span>
-          <span class="chip">Traffic (cars/s)</span>
-          <span class="chip">Dark? (SPEC1) · Black ice? (SPEC2)</span>
-        </div>
-      </div>
-      <svg id="nn" width="470" height="392" viewBox="0 0 470 392" aria-label="Network with 9, 16, 8 and 1 nodes"></svg>
-      <div style="flex:1">
-        <div class="kicker" style="color:var(--faint);margin-bottom:12px">Predicted attribute</div>
-        <p style="font:600 30px/1.2 var(--display)">Near-accidents per hour</p>
-        <p class="small" style="margin-top:10px">for each candidate limit: 40, 50, 60, 70 km/h</p>
-        <div class="rule" style="margin:22px 0"></div>
-        <p class="small"><strong>10 networks</strong> (ensemble)<br>9 → 16 → 8 → 1, Poisson loss</p>
-      </div>
-    </div>
-    <div>
-      <div style="display:flex;height:44px;border-radius:10px;overflow:hidden;font:600 16px/44px var(--display)">
-        <div style="flex:21;background:#2A2F37;padding-left:16px">Train · days 1–21 · 275 h</div>
-        <div style="flex:5;background:#3A404A;padding-left:14px">Valid. · 22–26 · 54 h</div>
-        <div style="flex:5;background:var(--accent);color:#0A0C0F;padding-left:14px">Test · 27–31 · 60 h</div>
-      </div>
-      <p class="caption">Split by whole days, plus 20-fold cross-validation grouped by day.</p>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>Feature engineering. The network gets nine inputs: the speed limit itself, which is what we control; light, as the logarithm of illuminance, because it ranges from zero to over 100,000 lux; water on the road; temperature; wind strength; humidity; traffic in cars per second; and the two router flags, dark and black ice. Where several sensors measure the same thing we take their median, so one faulty sensor cannot move the value. We left out minute and second, noise in decibels because it just follows traffic, wind direction, and licence plates.</p>
-    <p>The predicted attribute is the number of near-accidents in the hour, counted according to SPEC4.</p>
-    <p>The model is an ensemble of ten small networks, nine to sixteen to eight to one, trained with Poisson loss because the target is a count. We train only on the 389 dark or icy hours, because that is the only place the network is used. We split by whole days, so hours of one day never leak between training and test, and on top of that we run 20-fold cross-validation grouped by day.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 10 RESULT -->
-<section class="slide" data-label="Network result">
-  <div class="kicker">Result</div>
-  <h2 class="title">The network does not beat guessing the average</h2>
+<section class="slide" data-label="Retraining" data-chapter="results">
+  <div class="kicker">Results · Retraining</div>
+  <h2 class="title">Year N+1: do not retrain, the sensor file repeats last year</h2>
   <div class="content row" style="gap:56px;align-items:flex-start">
-    <div style="width:330px;flex:0 0 330px">
-      <div class="big">+0.4<span class="u">%</span></div>
-      <p class="stat-label">cross-validated skill over a constant predictor (20 folds, grouped by day)</p>
-      <div class="rule" style="margin:30px 0"></div>
-      <p class="body">Medium confidence needs <strong>+2&nbsp;%</strong>. So confidence is <strong>always Low</strong>.</p>
+    <div style="width:430px;flex:0 0 430px">
+      <svg width="430" height="420" viewBox="0 0 430 420" role="img" aria-label="Near-accidents in January: Year N 964, Year N+1 822">
+        <!-- baseline 360, scale 1000 -> 300px -->
+        <g stroke="#272C34"><line x1="70" y1="360" x2="420" y2="360"/><line x1="70" y1="210" x2="420" y2="210"/><line x1="70" y1="60" x2="420" y2="60"/></g>
+        <g fill="#646B76" style="font:500 15px var(--body)" text-anchor="end"><text x="58" y="365">0</text><text x="58" y="215">500</text><text x="58" y="65">1,000</text></g>
+        <rect x="110" y="70.8" width="120" height="289.2" rx="5" fill="#3A404A"/>
+        <rect x="270" y="113.4" width="120" height="246.6" rx="5" fill="#FFB224"/>
+        <text x="170" y="56" text-anchor="middle" class="num" fill="#EEEFF1" style="font-size:24px">964</text>
+        <text x="330" y="99" text-anchor="middle" class="num" fill="#FFB224" style="font-size:24px">822</text>
+        <text x="170" y="388" text-anchor="middle" fill="#EEEFF1" style="font:600 18px var(--display)">Year N</text>
+        <text x="330" y="388" text-anchor="middle" fill="#EEEFF1" style="font:600 18px var(--display)">Year N+1</text>
+        <text x="245" y="414" text-anchor="middle" fill="#A0A6AF" style="font:500 15px var(--body)">Near-accidents in January (count)</text>
+      </svg>
+      <p class="small" style="margin-top:8px"><strong>−15 %</strong>, p = 0.0008, while every input stayed the same.</p>
     </div>
-    <div class="col" style="flex:1;gap:22px">
-      <svg width="920" height="250" viewBox="0 0 920 250" role="img" aria-label="Skill on single split and cross-validation">
-        <!-- x(v)=330+(v+5)*52 : -5..+6 -->
-        <g stroke="#272C34"><line x1="382" y1="20" x2="382" y2="190"/><line x1="486" y1="20" x2="486" y2="190"/><line x1="798" y1="20" x2="798" y2="190"/></g>
-        <line x1="590" y1="14" x2="590" y2="190" stroke="#A0A6AF" stroke-width="2"/>
-        <line x1="694" y1="14" x2="694" y2="190" stroke="#FFB224" stroke-width="2.5" stroke-dasharray="8 6"/>
-        <text x="702" y="30" fill="#FFB224" style="font:600 15px var(--display)">+2 % needed for Medium</text>
-        <text x="582" y="30" text-anchor="end" fill="#A0A6AF" style="font:500 15px var(--body)">0 = guessing the average</text>
-        <text x="0" y="78" fill="#EEEFF1" style="font:600 19px var(--display)">Single test split</text>
-        <text x="0" y="100" fill="#646B76" style="font:500 15px var(--body)">days 27–31</text>
-        <circle cx="678.4" cy="82" r="9" fill="#EEEFF1"/>
-        <text x="664" y="88" text-anchor="end" class="num" fill="#EEEFF1" style="font-size:19px">+1.7 %</text>
-        <text x="0" y="148" fill="#EEEFF1" style="font:600 19px var(--display)">Cross-validated</text>
-        <text x="0" y="170" fill="#646B76" style="font:500 15px var(--body)">20 folds, range shown</text>
-        <line x1="423.6" y1="152" x2="834.4" y2="152" stroke="#FFB224" stroke-width="3"/>
-        <line x1="423.6" y1="142" x2="423.6" y2="162" stroke="#FFB224" stroke-width="3"/>
-        <line x1="834.4" y1="142" x2="834.4" y2="162" stroke="#FFB224" stroke-width="3"/>
-        <circle cx="610.8" cy="152" r="10" fill="#FFB224"/>
-        <text x="602" y="185" text-anchor="start" class="num" fill="#FFB224" style="font-size:19px">+0.4 %</text>
-        <text x="423.6" y="134" text-anchor="middle" class="num" fill="#A0A6AF" style="font-size:16px">−3.2 %</text>
-        <text x="834.4" y="134" text-anchor="middle" class="num" fill="#A0A6AF" style="font-size:16px">+4.7 %</text>
-        <g fill="#646B76" style="font:500 15px var(--body)" text-anchor="middle">
-          <text x="382" y="212">−4 %</text><text x="486" y="212">−2 %</text><text x="590" y="212">0 %</text><text x="694" y="212">+2 %</text><text x="798" y="212">+4 %</text>
-        </g>
-        <text x="590" y="240" text-anchor="middle" fill="#A0A6AF" style="font:500 15px var(--body)">Skill vs. constant predictor (% lower Poisson deviance)</text>
-      </svg>
-      <div class="rule"></div>
-      <svg width="920" height="168" viewBox="0 0 920 168" role="img" aria-label="Poisson deviance on test days for network, constant and GLM">
-        <text x="0" y="16" fill="#A0A6AF" style="font:600 13px var(--display);letter-spacing:.12em">TEST POISSON DEVIANCE · LOWER IS BETTER</text>
-        <!-- scale 0..1 over 520px from x=200 -->
-        <text x="0" y="56" fill="#EEEFF1" style="font:600 18px var(--display)">Network</text>
-        <rect x="200" y="40" width="510.8" height="22" rx="4" fill="#FFB224"/>
-        <text x="720" y="57" class="num" fill="#EEEFF1" style="font-size:18px">0.982</text>
-        <text x="0" y="92" fill="#EEEFF1" style="font:600 18px var(--display)">Constant</text>
-        <rect x="200" y="76" width="519.6" height="22" rx="4" fill="#3A404A"/>
-        <text x="729" y="93" class="num" fill="#EEEFF1" style="font-size:18px">0.999</text>
-        <text x="0" y="128" fill="#EEEFF1" style="font:600 18px var(--display)">Linear (GLM)</text>
-        <rect x="200" y="112" width="508.6" height="22" rx="4" fill="#3A404A"/>
-        <text x="718" y="129" class="num" fill="#EEEFF1" style="font-size:18px">0.978</text>
-        <g fill="#646B76" style="font:500 14px var(--body)" text-anchor="middle"><text x="200" y="160">0</text><text x="460" y="160">0.5</text><text x="720" y="160">1.0</text></g>
-      </svg>
+    <div class="col" style="flex:1;gap:20px">
+      <div class="row" style="gap:20px">
+        <div class="card" style="flex:1"><span class="tag">Input drift</span><div class="big sm white">KS = 0</div><p class="small" style="margin-top:10px">on all 17 sensors: identical readings</p></div>
+        <div class="card" style="flex:1"><span class="tag">Year N model on N+1</span><div class="big sm white">−0.5<span class="u">%</span></div><p class="small" style="margin-top:10px">skill vs. the Year N average</p></div>
+        <div class="card" style="flex:1"><span class="tag">Retrained on N+1</span><div class="big sm white">−1.1<span class="u">%</span></div><p class="small" style="margin-top:10px">cross-validated skill</p></div>
+      </div>
+      <div class="card hl">
+        <span class="tag">Decision</span>
+        <p style="font-size:24px;line-height:1.4">Find out why the file repeats Year N. <span class="muted">If it is genuine, retraining would only shift the base rate, not add skill.</span></p>
+      </div>
     </div>
   </div>
   <aside class="notes">
-    <p>And this is the result. Skill means how much better the network is than a constant predictor that always guesses the average.</p>
-    <p>On the single test split, days 27 to 31, the network looked 1.7 percent better. That sounds like something. But when we repeated the evaluation across 20 folds, the average was only plus 0.4 percent, and the individual folds ranged from minus 3.2 to plus 4.7. That is noise.</p>
-    <p>Below, the test deviance of the network, the constant and a simple linear model are practically identical; the linear model is even slightly better. Our confidence rule requires at least two percent cross-validated skill before the network can reach Medium confidence, so its confidence is always Low, and the GUI says so.</p>
-    <p>Importantly, this is not a bug. A control experiment in our test suite plants a real signal in generated data, and the same code learns it. The code works. The data has nothing to say about speed.</p>
+    <p>The retraining exercise: should we retrain on next year's data?</p>
+    <p>Surprise: the Year N+1 sensor readings are identical to Year N, value for value. Drift is exactly zero on every sensor.</p>
+    <p>Yet near-accidents fell from 964 to 822. Neither the old model nor a retrained one has skill on it.</p>
+    <p>Decision: do not retrain. First find out why the file repeats Year N.</p>
   </aside>
 </section>
 
-<!-- ===================================================== 11 REQ1 -->
-<section class="slide" data-label="REQ1 fallback">
-  <div class="kicker">REQ1</div>
-  <h2 class="title">REQ1 cannot be met with this data, so the system falls back to 60 km/h and asks the operator</h2>
+<section class="slide" data-label="AI-use reflection" data-chapter="wrap">
+  <div class="kicker">Wrap-up · Use of AI</div>
+  <h2 class="title">How we used AI: ourselves first, then prompts</h2>
+  <div class="content col" style="gap:26px">
+    <p class="small">Course rule (SE4AI, lecture 1, p. 20): each exercise without AI, with an initial prompt and with an improved prompt. Assistant: Claude Code.</p>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="card"><span class="tag">01 · Without AI</span><h3>All three areas by hand</h3><p class="small">Requirements, data preparation, architecture and tests. Our yardstick.</p></div>
+      <div class="card"><span class="tag">02 · Initial prompt</span><h3>Generic, long, hidden flaws</h3><p class="small">Plausible output with bad decisions buried inside, e.g. “lowest prediction”.</p></div>
+      <div class="card hl"><span class="tag">03 · Improved prompt</span><h3>Specific, short, checkable</h3><p class="small">Our files and requirements as context; short answers we could test.</p></div>
+    </div>
+    <div class="card hl" style="padding:22px 28px"><p style="font-size:22px;line-height:1.45">AI wrote quickly; <strong>our own first pass and the tests decided what was right.</strong> <span class="muted">Responsibility stays with us.</span></p></div>
+  </div>
+  <aside class="notes">
+    <p>The course rule: each exercise without AI, with an initial prompt, and with an improved prompt.</p>
+    <p>We did the requirements, data preparation and architecture ourselves first. That was our yardstick.</p>
+    <p>Initial prompts gave long, generic answers that hid bad decisions. Example: a 'lowest prediction' rule that chose 70 km/h on icy nights.</p>
+    <p>Improved prompts gave the AI our files as context and asked for short, testable answers.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Conclusion" data-chapter="wrap">
+  <div class="kicker">Wrap-up · Conclusion</div>
+  <h2 class="title">A sound system on data that cannot carry REQ1</h2>
+  <div class="content col" style="gap:30px">
+    <div class="lessons">
+      <div class="lesson" style="min-height:0;padding:30px 30px 32px"><div class="n">01</div><h3>Requirements first</h3><p>Unit and scope errors in the text would have broken the code.</p></div>
+      <div class="lesson" style="min-height:0;padding:30px 30px 32px"><div class="n">02</div><h3>Always a baseline</h3><p>A model means nothing until it beats the average.</p></div>
+      <div class="lesson" style="min-height:0;padding:30px 30px 32px"><div class="n">03</div><h3>Guard weak models</h3><p>Plain rules, fallbacks and a human keep it safe.</p></div>
+    </div>
+    <div class="card hl" style="padding:26px 30px">
+      <span class="tag">Next steps</span>
+      <div class="road" style="grid-template-columns:repeat(3,1fr);margin-top:6px">
+        <div class="r hl"><div class="n">01</div><h3>Explain the Year N+1 file</h3></div>
+        <div class="r hl"><div class="n">02</div><h3>Define REQ1 precisely</h3></div>
+        <div class="r hl"><div class="n">03</div><h3>Trial: ≈ 260 h per limit</h3></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Three lessons. Requirements analysis caught errors that would have broken the code. A baseline shows whether a model has learned anything. And when the model is weak, plain rules, fallbacks and a human keep the system safe.</p>
+    <p>Next steps: find out why the Year N+1 file repeats Year N; define REQ1 with a road section and period; and run a controlled trial that varies the limit, about 260 dark or icy hours per limit.</p>
+    <p>Until then, operators decide, supported by the system.</p>
+  </aside>
+</section>
+
+<section class="slide" data-label="Questions">
+  <div class="content col" style="justify-content:center;margin-top:0">
+    <div class="kicker">Thank you</div>
+    <h2 class="title" style="font-size:120px;letter-spacing:-.05em;margin-top:22px">Questions?</h2>
+    <div class="card hl" style="margin-top:56px;max-width:1100px;display:flex;gap:40px;align-items:center">
+      <div class="kicker" style="white-space:nowrap">In one sentence</div>
+      <p style="font-size:24px;line-height:1.45">Built and tested against every requirement; <strong>REQ1 needs better data,</strong> <span class="muted">so operators decide until then.</span></p>
+    </div>
+    <p class="small" style="margin-top:28px">Appendix: stakeholders · full requirements · test tables · sequence diagram · change requests · research · synthetic data · EU AI Act</p>
+  </div>
+  <aside class="notes">
+    <p>Close with the one sentence on the slide, then take questions. Use the appendix when a table helps; never improvise a number.</p>
+  </aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: stakeholders">
+  <div class="kicker"><span class="appx-badge">Appendix A1 ·</span> Stakeholders and glossary</div>
+  <h2 class="title">All sixteen stakeholder groups, and the terms we fixed</h2>
+  <div class="content row" style="gap:40px;align-items:flex-start">
+    <table class="t" style="font-size:16px;flex:1.4">
+      <tr><th>Stakeholder</th><th>Main interest</th><th>Stakeholder</th><th>Main interest</th></tr>
+      <tr><td>Drivers</td><td>Safety, travel time</td><td>Data protection officer</td><td>Licence plates</td></tr>
+      <tr><td>Passengers, people after a breakdown</td><td>Safety</td><td>Environmental agency</td><td>Air-quality targets</td></tr>
+      <tr><td>Operator management</td><td>Cost, liability</td><td>Residents</td><td>Noise, air</td></tr>
+      <tr><td>Control-room operators</td><td>Trust, override</td><td>API and weather providers</td><td>Interface stability</td></tr>
+      <tr><td>Sensor and sign maintenance</td><td>Failure alerts</td><td>Navigation app makers</td><td>Machine-readable limits</td></tr>
+      <tr><td>Police, emergency services</td><td>Current limits</td><td>LLM provider</td><td>Usage terms</td></tr>
+      <tr><td>Ministry, road regulators</td><td>Legality</td><td>Developers, testers</td><td>Testability</td></tr>
+      <tr><td>EU AI Act authorities</td><td>Conformity</td><td>Works council</td><td>No monitoring via logs</td></tr>
+    </table>
+    <table class="t" style="font-size:16px;flex:1">
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td>Near-accident</td><td>Accident row with CloseCarCm, CloseGuardrailCm or SkidAngle</td></tr>
+      <tr><td>Accident</td><td>Row with Damage set; not a near-accident</td></tr>
+      <tr><td>Dark / black ice</td><td>SPEC1 / SPEC2</td></tr>
+      <tr><td>Candidate limit</td><td>40, 50, 60 or 70 km/h asked of the network</td></tr>
+      <tr><td>Support</td><td>Hours of dark or icy evidence at a limit</td></tr>
+      <tr><td>Operator</td><td>Control-room staff who can override</td></tr>
+    </table>
+  </div>
+  <aside class="notes"><p>The full stakeholder list from SpeedLimit01 and the glossary terms we use throughout.</p></aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: requirements">
+  <div class="kicker"><span class="appx-badge">Appendix A2 ·</span> Requirements</div>
+  <h2 class="title">Added requirements, quality requirements and assumptions</h2>
+  <div class="content row" style="gap:40px;align-items:flex-start">
+    <table class="t" style="font-size:16px;flex:1">
+      <tr><th>Added system requirement</th></tr>
+      <tr><td><b class="acc">REQ4</b> Several reasons apply → the strictest limit</td></tr>
+      <tr><td><b class="acc">REQ5</b> Recalculate at least once per hour</td></tr>
+      <tr><td><b class="acc">REQ6</b> Invalid input or failure → never a silently higher limit; alert</td></tr>
+      <tr><td><b class="acc">REQ7</b> Operator can override at any time</td></tr>
+      <tr><td><b class="acc">REQ8</b> Every limit logged with reason and source</td></tr>
+    </table>
+    <table class="t" style="font-size:16px;flex:1.1">
+      <tr><th>Quality</th><th>Non-functional requirement</th></tr>
+      <tr><td>Availability</td><td>A limit is displayed 99.99% of the time</td></tr>
+      <tr><td>Latency</td><td>New limit within 60 s of a reading</td></tr>
+      <tr><td>Reliability</td><td>One failed sensor alone cannot change the decision</td></tr>
+      <tr><td>Safety</td><td>No failure raises the limit without review</td></tr>
+      <tr><td>Security</td><td>Only authenticated operators publish</td></tr>
+      <tr><td>Privacy</td><td>Licence plates never used in training</td></tr>
+      <tr><td>Auditability</td><td>Each decision reconstructable for 5 years</td></tr>
+      <tr><td>Other</td><td>Explainability, maintainability, sustainability, testability</td></tr>
+    </table>
+    <table class="t" style="font-size:16px;flex:1">
+      <tr><th>Assumption</th></tr>
+      <tr><td>Accident hours 1–24 = sensor hours 0–23</td></tr>
+      <tr><td>Sensor 16 is traffic; 19 is temperature</td></tr>
+      <tr><td>Wind unit “hm/h” is a typo for km/h</td></tr>
+      <tr><td>Near-accidents are recorded reliably</td></tr>
+      <tr><td>January is representative (it may well not be)</td></tr>
+      <tr><td>EU limits: PM10 50, NO₂ 200 µg/m³</td></tr>
+    </table>
+  </div>
+  <aside class="notes"><p>For reference: the five system requirements we added, the non-functional requirements, and the main assumptions. The glossary defines near-accident, accident, dark, black ice, monitored section, candidate limit, support and operator.</p></aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: Router tests">
+  <div class="kicker"><span class="appx-badge">Appendix A3 ·</span> Router test cases · SpeedLimit10b</div>
+  <h2 class="title">Router: 18 boundary tests, all passing</h2>
+  <div class="content row" style="gap:56px;align-items:flex-start">
+    <table class="t" style="font-size:19px;flex:1">
+      <tr><th>Illuminance (mlx)</th><th>Water (µm)</th><th>Temp. (°C)</th><th>Why</th><th class="c">Network used?</th></tr>
+      <tr><td>500</td><td>1000</td><td>−1</td><td>not dark; water not above 1000</td><td class="c no">No</td></tr>
+      <tr><td>500</td><td>1001</td><td>0</td><td>not dark; 0 °C is not below zero</td><td class="c no">No</td></tr>
+      <tr><td>500</td><td>1001</td><td>−1</td><td>black ice</td><td class="c yes">Yes</td></tr>
+      <tr><td>499</td><td>1000</td><td>−1</td><td>dark</td><td class="c yes">Yes</td></tr>
+      <tr><td>499</td><td>0</td><td>20</td><td>dark, warm and dry</td><td class="c yes">Yes</td></tr>
+      <tr><td>100,000</td><td>5000</td><td>−10</td><td>black ice in daylight</td><td class="c yes">Yes</td></tr>
+      <tr><td>100,000</td><td>5000</td><td>5</td><td>wet but above zero</td><td class="c no">No</td></tr>
+    </table>
+    <div style="width:330px;flex:0 0 330px" class="col">
+      <div class="kicker" style="color:var(--faint);margin-bottom:14px">Also tested</div>
+      <p class="small">Dark at 0 and 499 mlx; not at 500 or 501</p>
+      <p class="small" style="margin-top:10px">Black ice at (1001 µm, −1 °C) and (5000, −20); not at (1000, −1), (1001, 0), (1000, 0)</p>
+      <p class="small" style="margin-top:10px">0.5 lux = 500 mlx</p>
+      <p class="small" style="margin-top:10px">Both reasons reported together</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The Router test table from SpeedLimit10b, as automated in our suite. The interesting rows are the boundaries: exactly 500 millilux is not dark, exactly 1000 micrometres is not enough water, and exactly zero degrees is not below zero.</p>
+  </aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: LLM tests">
+  <div class="kicker"><span class="appx-badge">Appendix A4 ·</span> LLM test cases · SpeedLimit10c</div>
+  <h2 class="title">LLM: golden ranges, guardrails and failure cases</h2>
+  <div class="content row" style="gap:48px;align-items:flex-start">
+    <table class="t" style="font-size:18px;flex:1.15">
+      <tr><th>Golden case</th><th>PM10 / NO₂ (µg/m³)</th><th class="c">Expert range</th><th class="c">Live LLM accepted</th></tr>
+      <tr><td>Clean air</td><td>20 / 40</td><td class="c">0</td><td class="c">0–10</td></tr>
+      <tr><td>Slight exceedance</td><td>55 / 90</td><td class="c">0–10</td><td class="c">0–20</td></tr>
+      <tr><td>Clear exceedance</td><td>120 / 250</td><td class="c">20–30</td><td class="c">10–40</td></tr>
+      <tr><td>Severe</td><td>400 / 500</td><td class="c">30–40</td><td class="c">20–40</td></tr>
+      <tr><td>Plausibility</td><td>0 / 0</td><td class="c">0</td><td class="c">0–10</td></tr>
+      <tr><td colspan="4" class="faint" style="font-size:15px;color:var(--faint)">Reductions in km/h. Live result: 5 of 5 in range. The rule-based fallback must meet the expert range.</td></tr>
+    </table>
+    <table class="t" style="font-size:17px;flex:1">
+      <tr><th>Robustness case</th><th>Expected</th></tr>
+      <tr><td>Reply 15, −10, 80, true, “ten”, missing, not JSON</td><td>Rejected by output guardrail</td></tr>
+      <tr><td>Input −1, 2001, NaN, text</td><td>Rejected; LLM never called</td></tr>
+      <tr><td>Answers 20, 10, 20</td><td>20; Medium confidence</td></tr>
+      <tr><td>Answers 0, 10, 30 (tie)</td><td>30, the larger; Low</td></tr>
+      <tr><td>All invalid, or LLM down</td><td>Fallback + review flag</td></tr>
+      <tr><td>Every call</td><td>Logged with seed and reply</td></tr>
+    </table>
+  </div>
+  <aside class="notes">
+    <p>SpeedLimit10c: the golden answers come from environmental limits and domain judgement, not from developers, and a range is more honest than one number. The live model is accepted within slightly wider ranges, and the deterministic fallback must meet the expert ranges. The right-hand table covers the guardrails, the voting and the failure paths.</p>
+  </aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: tests per component">
+  <div class="kicker"><span class="appx-badge">Appendix A5 ·</span> Tests per component</div>
+  <h2 class="title">At least five tests for every component</h2>
+  <div class="content row" style="gap:48px;align-items:flex-start">
+    <svg width="860" height="540" viewBox="0 0 860 540" role="img" aria-label="Automated tests per component">
+      <!-- x(t)=330+t*9.6 ; row h 27 from y=16 -->
+      <g stroke="#272C34"><line x1="330" y1="6" x2="330" y2="498"/><line x1="426" y1="6" x2="426" y2="498"/><line x1="522" y1="6" x2="522" y2="498"/><line x1="618" y1="6" x2="618" y2="498"/><line x1="714" y1="6" x2="714" y2="498"/><line x1="810" y1="6" x2="810" y2="498"/></g>
+      <g id="testbars"></g>
+      <line x1="378" y1="2" x2="378" y2="498" stroke="#FFB224" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="384" y="514" fill="#FFB224" style="font:600 14px var(--display)">minimum 5</text>
+      <g fill="#646B76" style="font:500 14px var(--body)" text-anchor="middle"><text x="330" y="514">0</text><text x="522" y="514">20</text><text x="618" y="514">30</text><text x="714" y="514">40</text><text x="810" y="514">50</text></g>
+      <text x="570" y="536" text-anchor="middle" fill="#A0A6AF" style="font:500 15px var(--body)">Automated tests per component (count)</text>
+    </svg>
+    <div class="col" style="flex:1;gap:26px">
+      <div><div class="big mid">335</div><p class="stat-label">tests passing, including 5 live golden cases against the real LLM</p></div>
+      <div class="rule"></div>
+      <p class="body"><strong>Allowed-to-use rules</strong> enforced by a test · <strong>7 UML diagrams</strong></p>
+      <p class="body"><strong>Caught real bugs:</strong> a missing review flag, scheduler timing, GUI issues.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Counted with pytest --collect-only. The dashed line marks the minimum of five per component.</p>
+  </aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: sequence 1">
+  <div class="kicker"><span class="appx-badge">Appendix A6 ·</span> Sequence diagram · part 1 of 2</div>
+  <h2 class="title">One cycle: input check, routing and the network</h2>
+  <div class="content"><div class="paper" style="padding:8px 12px;width:1350px;margin:0 auto"><img src="assets/uml_06_sequence_part1.png" alt="Sequence diagram, part 1"></div></div>
+  <aside class="notes"><p>The first half of one cycle: readings arrive, the input guardrail accepts or rejects them, the Router decides, and only if it says yes do the FeatureBuilder, the ensemble and the WeatherPolicy run.</p></aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: sequence 2">
+  <div class="kicker"><span class="appx-badge">Appendix A6 ·</span> Sequence diagram · part 2 of 2</div>
+  <h2 class="title">One cycle: air quality, decision, log and override</h2>
+  <div class="content"><div class="paper" style="padding:8px 12px;width:1090px;margin:0 auto"><img src="assets/uml_06_sequence_part2.png" alt="Sequence diagram, part 2"></div></div>
+  <aside class="notes"><p>The second half: the air-quality forecast and the three LLM samples, the Decider, the advisory research panel, the audit log, and the operator's optional override.</p></aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: training architecture">
+  <div class="kicker"><span class="appx-badge">Appendix A7 ·</span> Architecture · training stage</div>
+  <h2 class="title">Training stops at a validation gate if the data is not fit for use</h2>
+  <div class="content"><div class="paper" style="padding:10px 14px"><img src="assets/uml_01_architecture_training.png" alt="Training-stage architecture"></div></div>
+  <aside class="notes"><p>The training stage: loader and cleaner, the validation gate, the labeler, the shared FeatureBuilder and the ensemble trainer. If any hard validation check fails, training does not start.</p></aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: change requests">
+  <div class="kicker"><span class="appx-badge">Appendix A8 ·</span> Change requests · SpeedLimit21</div>
+  <h2 class="title">Two change requests stay in one component; electric cars do not</h2>
+  <div class="content">
+    <table class="t" style="font-size:20px">
+      <tr><th style="width:26%">Change request</th><th style="width:40%">What changes</th><th style="width:22%">Why so little (or so much)</th><th class="c" style="width:12%">Impact</th></tr>
+      <tr><td>Some temperature sensors report Fahrenheit</td><td>Sensor mapping in the configuration and one conversion in the cleaner; retrain if the training data changes</td><td>Only the cleaner knows raw units; everything after it sees °C</td><td class="c yes">Small</td></tr>
+      <tr><td>Only skidding counts as a near-accident</td><td>Call the labeler with skidding only, then validate and retrain</td><td>The label definition lives in one place</td><td class="c yes">Small</td></tr>
+      <tr><td>Electric cars exempt from air-quality limits</td><td>The Decider returns two limits; cycle, GUI and log carry both; signs must show two limits; a new requirement</td><td>“One limit for everyone” was an architectural assumption</td><td class="c" style="color:var(--text);font-weight:600">Large</td></tr>
+    </table>
+  </div>
+  <aside class="notes">
+    <p>The three change requests from SpeedLimit21. Fahrenheit sensors and "only skidding counts" each touch one place, because units are only known to the cleaner and the label definition only to the labeler; both need retraining afterwards. Exempting electric cars is the big one: the Decider, the cycle, the GUI, the log and the physical signs must all handle two limits at once.</p>
+  </aside>
+</section>
+
+<section class="slide appx" data-label="Appendix: REQ1 policy">
+  <div class="kicker"><span class="appx-badge">Appendix A9 ·</span> REQ1 policy</div>
+  <h2 class="title">Why a fixed 60 km/h, and not the lowest prediction</h2>
   <div class="content row" style="gap:60px;align-items:center">
     <div style="width:380px;flex:0 0 380px">
       <div class="big">0<span class="u">of 389</span></div>
@@ -584,46 +1000,13 @@ body.show-notes #notes { display: block; }
     </div>
   </div>
   <aside class="notes">
-    <p>What does that mean for REQ1? We replayed all 389 dark or icy hours. In none of them did the network predict any limit at or below one near-accident per hour. So the policy needs a fallback.</p>
-    <p>Our first rule was: pick the limit with the lowest prediction. That looked harmless. But replaying the data showed it chose 70 km/h in every single dark or icy hour, including icy nights. The network had learned the backwards pattern you saw earlier, that slower limits come with more near-accidents. That was unacceptable, so we replaced the rule.</p>
-    <p>The current rule is: take the highest limit predicted at or below one per hour; if there is none, use a fixed 60 km/h, the limit with the most evidence at 230 hours, and ask the operator to review.</p>
-    <p>On this data the fallback applies every time. To be honest, the network does not change the outcome today. We keep it in the design so that it can take over if better data gives it real skill.</p>
+    <p>The first rule picked the limit with the lowest prediction. It chose 70 km/h in every dark or icy hour, icy nights included, because the network learned that slower limits come with more near-accidents. We replaced it with a fixed 60 km/h plus operator review.</p>
   </aside>
 </section>
 
-<!-- ===================================================== 12 LLM -->
-<section class="slide" data-label="LLM air quality">
-  <div class="kicker">Air quality · REQ2</div>
-  <h2 class="title">The LLM is fenced in: numbers go in, and only one of five legal reductions comes out</h2>
-  <div class="content col" style="gap:34px">
-    <div class="pipe">
-      <div class="p"><div class="k">Forecast API</div><div class="h">Worst PM10, NO₂</div><div class="d">next 6 h, µg/m³</div></div>
-      <div class="arr">→</div>
-      <div class="p"><div class="k">Input guardrail</div><div class="h">Numbers only</div><div class="d">0–2,000 µg/m³; nothing to inject</div></div>
-      <div class="arr">→</div>
-      <div class="p hl"><div class="k">Local LLM</div><div class="h">qwen3:8b, asked 3×</div><div class="d">different seeds, on this machine</div></div>
-      <div class="arr">→</div>
-      <div class="p"><div class="k">Output guardrail</div><div class="h">0, 10, 20, 30, 40</div><div class="d">km/h reduction, else rejected</div></div>
-      <div class="arr">→</div>
-      <div class="p"><div class="k">Confidence</div><div class="h">Majority vote</div><div class="d">agreement = consistency, not correctness</div></div>
-    </div>
-    <p class="small" style="margin-top:-14px">No valid answer → rule-based fallback and an operator review flag.</p>
-    <div class="row" style="gap:64px;margin-top:6px">
-      <div><div class="big mid">5<span class="u">of 5</span></div><p class="stat-label">golden test cases within the expected range</p></div>
-      <div><div class="big mid">50<span class="u">km/h</span></div><p class="stat-label">for PM10 120 and NO₂ 250 µg/m³, 3 of 3 answers agree</p></div>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>REQ2 is handled by an LLM that runs locally: qwen3 with 8 billion parameters on Ollama, so no data leaves the machine. We treat it as untrusted.</p>
-    <p>The forecast comes from the Open-Meteo API, and we take the worst PM10 and nitrogen dioxide values of the next six hours. The input guardrail accepts only numbers in a plausible range, and the prompt contains only those numbers, so nothing can be injected. We ask the model three times with different seeds. The output guardrail accepts only five legal reductions: 0, 10, 20, 30 or 40 km/h. The majority answer wins, and confidence is the agreement between the three answers. That measures consistency, not correctness, and the GUI says exactly that. If no valid answer comes back, a rule-based fallback is used and a review flag is raised.</p>
-    <p>In testing, all five golden test cases came back within the expected range. For example, PM10 of 120 and NO2 of 250 micrograms per cubic metre gave a 30 km/h reduction, so 50 km/h, with all three answers agreeing.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 13 RESEARCH -->
-<section class="slide" data-label="Research vs system">
-  <div class="kicker">Research cross-check</div>
-  <h2 class="title">Research would go below 60 km/h on ice, and would not cut the limit for darkness or air alone</h2>
+<section class="slide appx" data-label="Appendix: research cross-check">
+  <div class="kicker"><span class="appx-badge">Appendix A10 ·</span> Research cross-check</div>
+  <h2 class="title">Research would go below 60 km/h on ice, and not cut for darkness or air alone</h2>
   <div class="content col" style="gap:14px">
     <div class="row" style="gap:36px;font-size:18px;color:var(--muted);align-items:center">
       <span style="display:inline-flex;align-items:center;gap:10px"><svg width="18" height="18"><circle cx="9" cy="9" r="8" fill="#FFB224"/></svg>Research advisor (cited stopping-distance physics)</span>
@@ -668,51 +1051,9 @@ body.show-notes #notes { display: block; }
   </aside>
 </section>
 
-<!-- ===================================================== 14 RETRAINING -->
-<section class="slide" data-label="Retraining">
-  <div class="kicker">Retraining · Year N+1</div>
-  <h2 class="title">Do not retrain yet: the Year N+1 sensor file is identical to Year N, so clarify the data first</h2>
-  <div class="content row" style="gap:56px;align-items:flex-start">
-    <div style="width:430px;flex:0 0 430px">
-      <svg width="430" height="420" viewBox="0 0 430 420" role="img" aria-label="Near-accidents in January: Year N 964, Year N+1 822">
-        <!-- baseline 360, scale 1000 -> 300px -->
-        <g stroke="#272C34"><line x1="70" y1="360" x2="420" y2="360"/><line x1="70" y1="210" x2="420" y2="210"/><line x1="70" y1="60" x2="420" y2="60"/></g>
-        <g fill="#646B76" style="font:500 15px var(--body)" text-anchor="end"><text x="58" y="365">0</text><text x="58" y="215">500</text><text x="58" y="65">1,000</text></g>
-        <rect x="110" y="70.8" width="120" height="289.2" rx="5" fill="#3A404A"/>
-        <rect x="270" y="113.4" width="120" height="246.6" rx="5" fill="#FFB224"/>
-        <text x="170" y="56" text-anchor="middle" class="num" fill="#EEEFF1" style="font-size:24px">964</text>
-        <text x="330" y="99" text-anchor="middle" class="num" fill="#FFB224" style="font-size:24px">822</text>
-        <text x="170" y="388" text-anchor="middle" fill="#EEEFF1" style="font:600 18px var(--display)">Year N</text>
-        <text x="330" y="388" text-anchor="middle" fill="#EEEFF1" style="font:600 18px var(--display)">Year N+1</text>
-        <text x="245" y="414" text-anchor="middle" fill="#A0A6AF" style="font:500 15px var(--body)">Near-accidents in January (count)</text>
-      </svg>
-      <p class="small" style="margin-top:8px"><strong>−15 %</strong>, p = 0.0008, while every input stayed the same.</p>
-    </div>
-    <div class="col" style="flex:1;gap:20px">
-      <div class="row" style="gap:20px">
-        <div class="card" style="flex:1"><span class="tag">Input drift</span><div class="big sm white">KS = 0</div><p class="small" style="margin-top:10px">on all 17 sensors: identical readings</p></div>
-        <div class="card" style="flex:1"><span class="tag">Year N model on N+1</span><div class="big sm white">−0.5<span class="u">%</span></div><p class="small" style="margin-top:10px">skill vs. the Year N average</p></div>
-        <div class="card" style="flex:1"><span class="tag">Retrained on N+1</span><div class="big sm white">−1.1<span class="u">%</span></div><p class="small" style="margin-top:10px">cross-validated skill</p></div>
-      </div>
-      <div class="card hl">
-        <span class="tag">Decision</span>
-        <p style="font-size:24px;line-height:1.4">Find out why the file repeats Year N. <span class="muted">If it is genuine, retraining would only shift the base rate, not add skill.</span></p>
-      </div>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>The retraining exercise asked us to analyse the next year's data and decide whether to retrain.</p>
-    <p>The first finding is surprising: the Year N+1 sensor readings are identical to Year N, value for value. The largest drift statistic across all sensors is exactly zero. A real year of weather cannot repeat itself, so the file may be a copy.</p>
-    <p>Yet the near-accidents did change: 964 in Year N, 822 in Year N+1, a 15 percent drop that is statistically significant. Conditions apparently stayed the same, but outcomes changed.</p>
-    <p>Our model trained on Year N scores minus 0.5 percent on Year N+1, and a model retrained on Year N+1 scores minus 1.1 percent in cross-validation. Neither has skill.</p>
-    <p>So our decision is: do not retrain yet. First find out where this file comes from. If it is a copy, we need the right file. If it is genuine, retraining would only shift the base rate and would add no predictive skill.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 15 SYNTHETIC -->
-<section class="slide" data-label="Synthetic data">
-  <div class="kicker">Synthetic data</div>
-  <h2 class="title">More data is not the answer: synthetic data gives back whatever we assume</h2>
+<section class="slide appx" data-label="Appendix: synthetic data">
+  <div class="kicker"><span class="appx-badge">Appendix A11 ·</span> Synthetic data</div>
+  <h2 class="title">Synthetic data gives back whatever we assume</h2>
   <div class="content row" style="gap:44px;align-items:flex-start">
     <div style="width:820px;flex:0 0 820px">
       <div class="paper"><img src="assets/10_synthetic_assumptions.png" alt="Predicted near-accidents per hour by limit for models trained on opposite synthetic assumptions, with real data points"></div>
@@ -736,39 +1077,9 @@ body.show-notes #notes { display: block; }
   </aside>
 </section>
 
-<!-- ===================================================== 16 TESTING -->
-<section class="slide" data-label="Testing">
-  <div class="kicker">Quality assurance</div>
-  <h2 class="title">Test-first development: 335 automated tests, and at least five for every component</h2>
-  <div class="content row" style="gap:48px;align-items:flex-start">
-    <svg width="860" height="540" viewBox="0 0 860 540" role="img" aria-label="Automated tests per component">
-      <!-- x(t)=330+t*9.6 ; row h 27 from y=16 -->
-      <g stroke="#272C34"><line x1="330" y1="6" x2="330" y2="498"/><line x1="426" y1="6" x2="426" y2="498"/><line x1="522" y1="6" x2="522" y2="498"/><line x1="618" y1="6" x2="618" y2="498"/><line x1="714" y1="6" x2="714" y2="498"/><line x1="810" y1="6" x2="810" y2="498"/></g>
-      <g id="testbars"></g>
-      <line x1="378" y1="2" x2="378" y2="498" stroke="#FFB224" stroke-width="2" stroke-dasharray="6 5"/>
-      <text x="384" y="514" fill="#FFB224" style="font:600 14px var(--display)">minimum 5</text>
-      <g fill="#646B76" style="font:500 14px var(--body)" text-anchor="middle"><text x="330" y="514">0</text><text x="522" y="514">20</text><text x="618" y="514">30</text><text x="714" y="514">40</text><text x="810" y="514">50</text></g>
-      <text x="570" y="536" text-anchor="middle" fill="#A0A6AF" style="font:500 15px var(--body)">Automated tests per component (count)</text>
-    </svg>
-    <div class="col" style="flex:1;gap:26px">
-      <div><div class="big mid">335</div><p class="stat-label">tests passing, including 5 live golden cases against the real LLM</p></div>
-      <div class="rule"></div>
-      <p class="body"><strong>Allowed-to-use rules</strong> enforced by a test · <strong>7 UML diagrams</strong></p>
-      <p class="body"><strong>Caught real bugs:</strong> a missing review flag, scheduler timing, GUI issues.</p>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>On quality: we worked test-first. For each change we wrote the test, watched it fail for the right reason, and then wrote the code.</p>
-    <p>The suite has 335 automated tests. 330 run without the LLM, and five live tests send the golden air-quality cases to the real local model. All of them pass. Every component has at least five tests; the chart shows the counts, with the dashed line at five. The Router alone has 18, mostly boundary cases such as exactly 500 millilux or exactly zero degrees. The architecture test enforces the allowed-to-use rules, and we documented the system in seven UML diagrams.</p>
-    <p>This discipline paid off. Tests caught real bugs, for example a missing review flag when the network was unavailable, a scheduler that ran at the wrong time, and several GUI issues.</p>
-    <p>For a system that may set speed limits, tests are what let us say with confidence that the code does what we claim, even though the model cannot do what REQ1 asks.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 17 HITL & LEGAL -->
-<section class="slide" data-label="Oversight and EU AI Act">
-  <div class="kicker">Human oversight · EU AI Act</div>
-  <h2 class="title">A high-risk AI system: humans stay in charge, and two AI Act articles are not yet met</h2>
+<section class="slide appx" data-label="Appendix: oversight and EU AI Act">
+  <div class="kicker"><span class="appx-badge">Appendix A12 ·</span> Human oversight · EU AI Act</div>
+  <h2 class="title">High-risk under the EU AI Act: two articles are not met yet</h2>
   <div class="content row" style="gap:56px;align-items:flex-start">
     <div style="flex:1">
       <div class="kicker" style="color:var(--faint);margin-bottom:14px">Human in the loop · SpeedLimit32b</div>
@@ -798,36 +1109,9 @@ body.show-notes #notes { display: block; }
   </aside>
 </section>
 
-<!-- ===================================================== 18 LESSONS -->
-<section class="slide" data-label="Lessons learned">
-  <div class="kicker">Lessons learned</div>
-  <h2 class="title">Beat a baseline, distrust a single split, and guard a weak model hardest</h2>
-  <div class="content">
-    <div class="lessons">
-      <div class="lesson"><div class="n">01</div><h3>Baseline first</h3><p>0.982 means nothing until a constant scores 0.999.</p></div>
-      <div class="lesson"><div class="n">02</div><h3>One split misleads</h3><p>+1.7 % on one split, +0.4 % cross-validated.</p></div>
-      <div class="lesson"><div class="n">03</div><h3>Run a control</h3><p>A planted signal separates broken code from empty data.</p></div>
-      <div class="lesson"><div class="n">04</div><h3>Check the joins</h3><p>An hour off by one creates or hides signal.</p></div>
-      <div class="lesson"><div class="n">05</div><h3>Guard weak models</h3><p>“Lowest prediction” chose 70 km/h on icy nights.</p></div>
-      <div class="lesson"><div class="n">06</div><h3>Data needs information</h3><p>Synthetic data returns its own assumptions.</p></div>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>Six lessons we take away.</p>
-    <p>One: a baseline is essential. A loss of 0.982 means nothing until you see that guessing the average gives 0.999.</p>
-    <p>Two: one test split can mislead. Ours said plus 1.7 percent; cross-validation said plus 0.4.</p>
-    <p>Three: run a control experiment. Planting a known signal told us whether the code was broken or the data was empty, and it stopped us from tuning a model that had nothing to learn.</p>
-    <p>Four: check your joins. Accidents are joined to sensors by hour only, and an off-by-one hour silently creates or hides signal.</p>
-    <p>Five: guardrails matter most when the model is weak. "Lowest prediction" looked harmless and produced 70 km/h on icy nights.</p>
-    <p>Six: more data only helps if it carries new information. Synthetic data with assumptions gives back the assumptions.</p>
-    <p>Two more that we saw throughout: requirement problems show up in the data, like millilux versus lux or an unreachable REQ1; and test-first development with an enforced architecture caught real bugs early.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 19 RECOMMENDATIONS -->
-<section class="slide" data-label="Recommendations">
-  <div class="kicker">Recommendations</div>
-  <h2 class="title">Fix the data and run a controlled trial before automating limits; operators decide until then</h2>
+<section class="slide appx" data-label="Appendix: trial size">
+  <div class="kicker"><span class="appx-badge">Appendix A13 ·</span> Next steps in detail</div>
+  <h2 class="title">Next steps, and how much data a trial needs</h2>
   <div class="content col" style="gap:38px">
     <div class="road">
       <div class="r"><div class="n">01 · NOW</div><h3>Explain the Year N+1 file</h3><p>Why are its sensor readings identical to Year N?</p></div>
@@ -861,214 +1145,9 @@ body.show-notes #notes { display: block; }
   </aside>
 </section>
 
-<!-- ===================================================== 20 AI REFLECTION -->
-<section class="slide" data-label="AI-use reflection">
-  <div class="kicker">AI-use reflection</div>
-  <h2 class="title">Doing every exercise ourselves first let us see where AI was generic, verbose or quietly wrong</h2>
-  <div class="content col" style="gap:26px">
-    <p class="small">Course rule (SE4AI, lecture 1, p. 20): each exercise without AI, with an initial prompt and with an improved prompt. Assistant: Claude Code.</p>
-    <div class="grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="card"><span class="tag">01 · Without AI</span><h3>All three areas by hand</h3><p class="small">Requirements, data preparation, architecture and tests. Our yardstick.</p></div>
-      <div class="card"><span class="tag">02 · Initial prompt</span><h3>Generic, long, hidden flaws</h3><p class="small">Plausible output with bad decisions buried inside, e.g. “lowest prediction”.</p></div>
-      <div class="card hl"><span class="tag">03 · Improved prompt</span><h3>Specific, short, checkable</h3><p class="small">Our files and requirements as context; short answers we could test.</p></div>
-    </div>
-    <div class="card hl" style="padding:22px 28px"><p style="font-size:22px;line-height:1.45">AI wrote quickly; <strong>our own first pass and the tests decided what was right.</strong> <span class="muted">Responsibility stays with us.</span></p></div>
-  </div>
-  <aside class="notes">
-    <p>The course asks for every exercise to be done three ways: without AI, with an initial prompt, and with an improved prompt, and for a reflection on the difference.</p>
-    <p>We did all three areas ourselves first: the requirements, the data preparation, and the architecture with its test cases. That took longer, but it gave us a yardstick to judge the AI against.</p>
-    <p>Our assistant was Claude Code. The local qwen3 model is only part of the product, as the air-quality component; we did not use it as a helper.</p>
-    <p>With our initial prompts the answers were generic, long and hard to check. Worse, they could look plausible while hiding a bad decision. The clearest example is the "lowest prediction" rule, which looked harmless and turned out to choose 70 km/h on icy nights.</p>
-    <p>With improved prompts we gave the AI our own files and requirements as context and asked for short answers we could test. The results became specific and checkable.</p>
-    <p>Our conclusion: AI produced drafts quickly, but our own first pass and the tests decided what was right. The responsibility for every decision and every number stays with us.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== 21 Q&A -->
-<section class="slide" data-label="Questions">
-  <div class="content col" style="justify-content:center;margin-top:0">
-    <div class="kicker">Thank you</div>
-    <h2 class="title" style="font-size:120px;letter-spacing:-.05em;margin-top:22px">Questions?</h2>
-    <div class="card hl" style="margin-top:56px;max-width:1100px;display:flex;gap:40px;align-items:center">
-      <div class="kicker" style="white-space:nowrap">The decision</div>
-      <p style="font-size:24px;line-height:1.45">No automatic limits from this data yet. <strong>Fund the data fix and a controlled trial;</strong> <span class="muted">operators decide, with expert rules.</span></p>
-    </div>
-    <p class="small" style="margin-top:28px">Appendix: change requests · Router and LLM test cases · sequence diagram · requirement lists</p>
-  </div>
-  <aside class="notes">
-    <p>To close, here is the decision once more. Do not automate limits from this data yet. Fund the data investigation and a controlled trial. Keep operators in charge, with expert rules, in the meantime.</p>
-    <p>We are happy to take questions. The appendix has the change requests, the test-case tables for the Router and the LLM, the full sequence diagram and the requirement lists, in case they come up.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== A1 CHANGE REQUESTS -->
-<section class="slide appx" data-label="Appendix: change requests">
-  <div class="kicker"><span class="appx-badge">Appendix A1 ·</span> Change requests · SpeedLimit21</div>
-  <h2 class="title">Two change requests stay inside one component; electric cars break “one limit for everyone”</h2>
-  <div class="content">
-    <table class="t" style="font-size:20px">
-      <tr><th style="width:26%">Change request</th><th style="width:40%">What changes</th><th style="width:22%">Why so little (or so much)</th><th class="c" style="width:12%">Impact</th></tr>
-      <tr><td>Some temperature sensors report Fahrenheit</td><td>Sensor mapping in the configuration and one conversion in the cleaner; retrain if the training data changes</td><td>Only the cleaner knows raw units; everything after it sees °C</td><td class="c yes">Small</td></tr>
-      <tr><td>Only skidding counts as a near-accident</td><td>Call the labeler with skidding only, then validate and retrain</td><td>The label definition lives in one place</td><td class="c yes">Small</td></tr>
-      <tr><td>Electric cars exempt from air-quality limits</td><td>The Decider returns two limits; cycle, GUI and log carry both; signs must show two limits; a new requirement</td><td>“One limit for everyone” was an architectural assumption</td><td class="c" style="color:var(--text);font-weight:600">Large</td></tr>
-    </table>
-  </div>
-  <aside class="notes">
-    <p>The three change requests from SpeedLimit21. Fahrenheit sensors and "only skidding counts" each touch one place, because units are only known to the cleaner and the label definition only to the labeler; both need retraining afterwards. Exempting electric cars is the big one: the Decider, the cycle, the GUI, the log and the physical signs must all handle two limits at once.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== A2 ROUTER TESTS -->
-<section class="slide appx" data-label="Appendix: Router tests">
-  <div class="kicker"><span class="appx-badge">Appendix A2 ·</span> Router test cases · SpeedLimit10b</div>
-  <h2 class="title">The Router is tested at every boundary: 18 tests, all passing</h2>
-  <div class="content row" style="gap:56px;align-items:flex-start">
-    <table class="t" style="font-size:19px;flex:1">
-      <tr><th>Illuminance (mlx)</th><th>Water (µm)</th><th>Temp. (°C)</th><th>Why</th><th class="c">Network used?</th></tr>
-      <tr><td>500</td><td>1000</td><td>−1</td><td>not dark; water not above 1000</td><td class="c no">No</td></tr>
-      <tr><td>500</td><td>1001</td><td>0</td><td>not dark; 0 °C is not below zero</td><td class="c no">No</td></tr>
-      <tr><td>500</td><td>1001</td><td>−1</td><td>black ice</td><td class="c yes">Yes</td></tr>
-      <tr><td>499</td><td>1000</td><td>−1</td><td>dark</td><td class="c yes">Yes</td></tr>
-      <tr><td>499</td><td>0</td><td>20</td><td>dark, warm and dry</td><td class="c yes">Yes</td></tr>
-      <tr><td>100,000</td><td>5000</td><td>−10</td><td>black ice in daylight</td><td class="c yes">Yes</td></tr>
-      <tr><td>100,000</td><td>5000</td><td>5</td><td>wet but above zero</td><td class="c no">No</td></tr>
-    </table>
-    <div style="width:330px;flex:0 0 330px" class="col">
-      <div class="kicker" style="color:var(--faint);margin-bottom:14px">Also tested</div>
-      <p class="small">Dark at 0 and 499 mlx; not at 500 or 501</p>
-      <p class="small" style="margin-top:10px">Black ice at (1001 µm, −1 °C) and (5000, −20); not at (1000, −1), (1001, 0), (1000, 0)</p>
-      <p class="small" style="margin-top:10px">0.5 lux = 500 mlx</p>
-      <p class="small" style="margin-top:10px">Both reasons reported together</p>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>The Router test table from SpeedLimit10b, as automated in our suite. The interesting rows are the boundaries: exactly 500 millilux is not dark, exactly 1000 micrometres is not enough water, and exactly zero degrees is not below zero.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== A3 LLM TESTS -->
-<section class="slide appx" data-label="Appendix: LLM tests">
-  <div class="kicker"><span class="appx-badge">Appendix A3 ·</span> LLM test cases · SpeedLimit10c</div>
-  <h2 class="title">The LLM component is tested with golden ranges, guardrail cases and failure cases</h2>
-  <div class="content row" style="gap:48px;align-items:flex-start">
-    <table class="t" style="font-size:18px;flex:1.15">
-      <tr><th>Golden case</th><th>PM10 / NO₂ (µg/m³)</th><th class="c">Expert range</th><th class="c">Live LLM accepted</th></tr>
-      <tr><td>Clean air</td><td>20 / 40</td><td class="c">0</td><td class="c">0–10</td></tr>
-      <tr><td>Slight exceedance</td><td>55 / 90</td><td class="c">0–10</td><td class="c">0–20</td></tr>
-      <tr><td>Clear exceedance</td><td>120 / 250</td><td class="c">20–30</td><td class="c">10–40</td></tr>
-      <tr><td>Severe</td><td>400 / 500</td><td class="c">30–40</td><td class="c">20–40</td></tr>
-      <tr><td>Plausibility</td><td>0 / 0</td><td class="c">0</td><td class="c">0–10</td></tr>
-      <tr><td colspan="4" class="faint" style="font-size:15px;color:var(--faint)">Reductions in km/h. Live result: 5 of 5 in range. The rule-based fallback must meet the expert range.</td></tr>
-    </table>
-    <table class="t" style="font-size:17px;flex:1">
-      <tr><th>Robustness case</th><th>Expected</th></tr>
-      <tr><td>Reply 15, −10, 80, true, “ten”, missing, not JSON</td><td>Rejected by output guardrail</td></tr>
-      <tr><td>Input −1, 2001, NaN, text</td><td>Rejected; LLM never called</td></tr>
-      <tr><td>Answers 20, 10, 20</td><td>20; Medium confidence</td></tr>
-      <tr><td>Answers 0, 10, 30 (tie)</td><td>30, the larger; Low</td></tr>
-      <tr><td>All invalid, or LLM down</td><td>Fallback + review flag</td></tr>
-      <tr><td>Every call</td><td>Logged with seed and reply</td></tr>
-    </table>
-  </div>
-  <aside class="notes">
-    <p>SpeedLimit10c: the golden answers come from environmental limits and domain judgement, not from developers, and a range is more honest than one number. The live model is accepted within slightly wider ranges, and the deterministic fallback must meet the expert ranges. The right-hand table covers the guardrails, the voting and the failure paths.</p>
-  </aside>
-</section>
-
-<!-- ===================================================== A4 SEQUENCE 1 -->
-<section class="slide appx" data-label="Appendix: sequence 1">
-  <div class="kicker"><span class="appx-badge">Appendix A4 ·</span> Sequence diagram · part 1 of 2</div>
-  <h2 class="title">One cycle: input check, routing and the neural-network path</h2>
-  <div class="content"><div class="paper" style="padding:8px 12px;width:1350px;margin:0 auto"><img src="assets/uml_06_sequence_part1.png" alt="Sequence diagram, part 1"></div></div>
-  <aside class="notes"><p>The first half of one cycle: readings arrive, the input guardrail accepts or rejects them, the Router decides, and only if it says yes do the FeatureBuilder, the ensemble and the WeatherPolicy run.</p></aside>
-</section>
-
-<!-- ===================================================== A5 SEQUENCE 2 -->
-<section class="slide appx" data-label="Appendix: sequence 2">
-  <div class="kicker"><span class="appx-badge">Appendix A4 ·</span> Sequence diagram · part 2 of 2</div>
-  <h2 class="title">One cycle: air quality, decision, research advice, log and override</h2>
-  <div class="content"><div class="paper" style="padding:8px 12px;width:1090px;margin:0 auto"><img src="assets/uml_06_sequence_part2.png" alt="Sequence diagram, part 2"></div></div>
-  <aside class="notes"><p>The second half: the air-quality forecast and the three LLM samples, the Decider, the advisory research panel, the audit log, and the operator's optional override.</p></aside>
-</section>
-
-<!-- ===================================================== A6 TRAINING ARCH -->
-<section class="slide appx" data-label="Appendix: training architecture">
-  <div class="kicker"><span class="appx-badge">Appendix A5 ·</span> Architecture · training stage</div>
-  <h2 class="title">Training stops at a validation gate if the data is not fit for use</h2>
-  <div class="content"><div class="paper" style="padding:10px 14px"><img src="assets/uml_01_architecture_training.png" alt="Training-stage architecture"></div></div>
-  <aside class="notes"><p>The training stage: loader and cleaner, the validation gate, the labeler, the shared FeatureBuilder and the ensemble trainer. If any hard validation check fails, training does not start.</p></aside>
-</section>
-
-<!-- ===================================================== A7 REQUIREMENTS -->
-<section class="slide appx" data-label="Appendix: requirements">
-  <div class="kicker"><span class="appx-badge">Appendix A6 ·</span> Requirements engineering</div>
-  <h2 class="title">Completed requirements, non-functional requirements and assumptions</h2>
-  <div class="content row" style="gap:40px;align-items:flex-start">
-    <table class="t" style="font-size:16px;flex:1">
-      <tr><th>Added system requirement</th></tr>
-      <tr><td><b class="acc">REQ4</b> Several reasons apply → the strictest limit</td></tr>
-      <tr><td><b class="acc">REQ5</b> Recalculate at least once per hour</td></tr>
-      <tr><td><b class="acc">REQ6</b> Invalid input or failure → never a silently higher limit; alert</td></tr>
-      <tr><td><b class="acc">REQ7</b> Operator can override at any time</td></tr>
-      <tr><td><b class="acc">REQ8</b> Every limit logged with reason and source</td></tr>
-    </table>
-    <table class="t" style="font-size:16px;flex:1.1">
-      <tr><th>Quality</th><th>Non-functional requirement</th></tr>
-      <tr><td>Availability</td><td>A limit is displayed 99.99% of the time</td></tr>
-      <tr><td>Latency</td><td>New limit within 60 s of a reading</td></tr>
-      <tr><td>Reliability</td><td>One failed sensor alone cannot change the decision</td></tr>
-      <tr><td>Safety</td><td>No failure raises the limit without review</td></tr>
-      <tr><td>Security</td><td>Only authenticated operators publish</td></tr>
-      <tr><td>Privacy</td><td>Licence plates never used in training</td></tr>
-      <tr><td>Auditability</td><td>Each decision reconstructable for 5 years</td></tr>
-      <tr><td>Other</td><td>Explainability, maintainability, sustainability, testability</td></tr>
-    </table>
-    <table class="t" style="font-size:16px;flex:1">
-      <tr><th>Assumption</th></tr>
-      <tr><td>Accident hours 1–24 = sensor hours 0–23</td></tr>
-      <tr><td>Sensor 16 is traffic; 19 is temperature</td></tr>
-      <tr><td>Wind unit “hm/h” is a typo for km/h</td></tr>
-      <tr><td>Near-accidents are recorded reliably</td></tr>
-      <tr><td>January is representative (it may well not be)</td></tr>
-      <tr><td>EU limits: PM10 50, NO₂ 200 µg/m³</td></tr>
-    </table>
-  </div>
-  <aside class="notes"><p>For reference: the five system requirements we added, the non-functional requirements, and the main assumptions. The glossary defines near-accident, accident, dark, black ice, monitored section, candidate limit, support and operator.</p></aside>
-</section>
-
-<!-- ===================================================== A8 STAKEHOLDERS -->
-<section class="slide appx" data-label="Appendix: stakeholders">
-  <div class="kicker"><span class="appx-badge">Appendix A7 ·</span> Stakeholders and glossary</div>
-  <h2 class="title">Sixteen stakeholder groups, and the terms we fixed</h2>
-  <div class="content row" style="gap:40px;align-items:flex-start">
-    <table class="t" style="font-size:16px;flex:1.4">
-      <tr><th>Stakeholder</th><th>Main interest</th><th>Stakeholder</th><th>Main interest</th></tr>
-      <tr><td>Drivers</td><td>Safety, travel time</td><td>Data protection officer</td><td>Licence plates</td></tr>
-      <tr><td>Passengers, people after a breakdown</td><td>Safety</td><td>Environmental agency</td><td>Air-quality targets</td></tr>
-      <tr><td>Operator management</td><td>Cost, liability</td><td>Residents</td><td>Noise, air</td></tr>
-      <tr><td>Control-room operators</td><td>Trust, override</td><td>API and weather providers</td><td>Interface stability</td></tr>
-      <tr><td>Sensor and sign maintenance</td><td>Failure alerts</td><td>Navigation app makers</td><td>Machine-readable limits</td></tr>
-      <tr><td>Police, emergency services</td><td>Current limits</td><td>LLM provider</td><td>Usage terms</td></tr>
-      <tr><td>Ministry, road regulators</td><td>Legality</td><td>Developers, testers</td><td>Testability</td></tr>
-      <tr><td>EU AI Act authorities</td><td>Conformity</td><td>Works council</td><td>No monitoring via logs</td></tr>
-    </table>
-    <table class="t" style="font-size:16px;flex:1">
-      <tr><th>Term</th><th>Meaning</th></tr>
-      <tr><td>Near-accident</td><td>Accident row with CloseCarCm, CloseGuardrailCm or SkidAngle</td></tr>
-      <tr><td>Accident</td><td>Row with Damage set; not a near-accident</td></tr>
-      <tr><td>Dark / black ice</td><td>SPEC1 / SPEC2</td></tr>
-      <tr><td>Candidate limit</td><td>40, 50, 60 or 70 km/h asked of the network</td></tr>
-      <tr><td>Support</td><td>Hours of dark or icy evidence at a limit</td></tr>
-      <tr><td>Operator</td><td>Control-room staff who can override</td></tr>
-    </table>
-  </div>
-  <aside class="notes"><p>The full stakeholder list from SpeedLimit01 and the glossary terms we use throughout.</p></aside>
-</section>
-
 </main>
 <div id="notes" aria-live="polite"><div class="nh"><span id="notes-title">Speaker notes</span><span>N to hide</span></div><div id="notes-body"></div></div>
 <div id="hint"><kbd>←</kbd><kbd>→</kbd> navigate · <kbd>N</kbd> notes · <kbd>F</kbd> full screen</div>
-
 <script>
 (function () {
   const slides = Array.from(document.querySelectorAll('.slide'));
@@ -1077,19 +1156,31 @@ body.show-notes #notes { display: block; }
   const notesTitle = document.getElementById('notes-title');
   const notesBody = document.getElementById('notes-body');
   let idx = 0;
-  // Who speaks on each main slide (alternating, Gheorghe first); Q&A together; appendix unassigned. Edit freely.
-  const SPEAKERS = Array.from({ length: 20 }, (_, i) => (i % 2 === 0 ? 'Gheorghe' : 'Mihail')).concat(['Both']);
+  // Who speaks on each main slide, by chapter; Q&A together; appendix unassigned. Edit freely.
+  const G = 'Gheorghe', M = 'Mihail';
+  const SPEAKERS = [G, G, G, G, M, M, M, M, G, G, G, M, M, G, M, G, M, M, 'Both'];
+
+  // chapter tracker on main slides
+  const CHAPTERS = [['context', 'Context'], ['req', 'Requirements'], ['data', 'Data'], ['design', 'Design'], ['results', 'Results'], ['wrap', 'Wrap-up']];
+  slides.forEach((s) => {
+    const c = CHAPTERS.findIndex(([k]) => k === s.dataset.chapter);
+    if (c < 0) return;
+    const t = document.createElement('div');
+    t.className = 'chap';
+    t.innerHTML = CHAPTERS.map(([, name], i) => '<span class="' + (i === c ? 'on' : i < c ? 'done' : '') + '">' + name + '</span>').join('<i></i>');
+    s.appendChild(t);
+  });
 
   // footers with slide numbers (printed too)
   slides.forEach((s, i) => {
     const f = document.createElement('div');
     f.className = 'foot';
-    f.innerHTML = '<span>SpeedLimit · Final management review</span><span class="num">' +
+    f.innerHTML = '<span>SpeedLimit · SE4AI case study</span><span class="num">' +
       String(i + 1).padStart(2, '0') + ' / ' + total + '</span>';
     s.appendChild(f);
   });
 
-  // neural-network drawing (slide 9)
+  // neural-network drawing (Design · Neural network)
   const nn = document.getElementById('nn');
   if (nn) {
     const layers = [9, 16, 8, 1], xs = [40, 170, 300, 430], H = 392, gap = 22;
@@ -1105,7 +1196,7 @@ body.show-notes #notes { display: block; }
     nn.innerHTML = s;
   }
 
-  // tests per component (slide 16), counted with pytest --collect-only
+  // tests per component (appendix A5), counted with pytest --collect-only
   const tb = document.getElementById('testbars');
   if (tb) {
     const data = [['ResearchAdvisor', 49], ['LLMManager', 41], ['Input guardrail, Normal/Abnormal', 33], ['CycleOrchestrator', 25],
