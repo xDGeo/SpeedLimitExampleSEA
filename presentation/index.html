@@ -351,13 +351,12 @@ table.t.lg td { padding-top: 17px; padding-bottom: 17px; }
     <div class="col" style="flex:1;gap:20px">
       <div class="kicker" style="color:var(--faint)">Errors in the given text</div>
       <div class="card" style="padding:24px 26px"><span class="tag">Units</span><p style="font-size:23px;line-height:1.4">Spec in millilux, sensors in lux</p></div>
-      <div class="card" style="padding:24px 26px"><span class="tag">Vague</span><p style="font-size:23px;line-height:1.4">REQ1 “on average”: over what?</p></div>
     </div>
   </div>
   <aside class="notes">
     <p>Specifications turn the requirements into exact numbers we can test.</p>
     <p>SPEC1 to 4 were given; 5 and 6 we added.</p>
-    <p>We also found ten language errors. Two examples: lux versus millilux, a factor of 1000, converted in one place. And 'on average' in REQ1 never says over which period or road section.</p>
+    <p>We also found ten language errors. Example: SPEC1 is in millilux but the sensors report lux, a factor of 1000. We convert in one place.</p>
   </aside>
 </section>
 
