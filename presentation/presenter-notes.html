@@ -98,222 +98,184 @@ td.t { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 <div class="kicker">SpeedLimit · SE4AI case study</div>
 <h1>Presenter notes</h1>
-<p class="sub">Gheorghe Tutunaru and Mihail Lupasco · about 13½ minutes plus questions · cue cards to read from. Short notes are also in the deck (press <kbd>N</kbd>).</p>
-
+<p class="sub">Gheorghe Tutunaru and Mihail Lupasco · about 11 minutes plus questions. Short notes are also in the deck (press <kbd>N</kbd>).</p>
 <h2>The thread</h2>
 <div class="box hl">
-  <p style="font:600 19px/1.4 var(--display);margin:0">Stakeholders lead to requirements, requirements become tests, the design is built against those tests, and the results check every requirement again. All are met and tested except REQ1, which this data cannot support.</p>
+  <p style="font:600 19px/1.4 var(--display);margin:0">Stakeholders → requirements → design → results. Every requirement is met and tested except REQ1, which this data cannot support, so dark or icy hours get 60 km/h and an operator review.</p>
 </div>
-<p class="muted" style="margin-top:10px">Name the thread on slide 2, close it on slide 15, and repeat it in one sentence on slide 19. The tracker at the top of each slide shows the audience where you are.</p>
-
 <h2>Before you start</h2>
 <div class="grid2">
   <div class="box">
     <p><b>Check the system</b></p>
     <ul>
       <li>Install the local model once: <code>ollama pull qwen3:8b</code>.</li>
-      <li>Then run <code>.venv/bin/python -m pytest -q -m live</code>. All 5 must pass, because slides 8, 12 and 15 say so.</li>
-      <li>Open <code>presentation/index.html</code> in Chrome and press <kbd>F</kbd>. If an image is missing, run <code>python3 -m http.server 8770</code> in <code>presentation/</code> and open <code>localhost:8770</code>.</li>
+      <li>Then run <code>.venv/bin/python -m pytest -q -m live</code>. All 5 should pass.</li>
+      <li>Open <code>presentation/index.html</code> in Chrome and press <kbd>F</kbd>.</li>
     </ul>
   </div>
   <div class="box">
     <p><b>Controls</b></p>
     <ul>
-      <li><kbd>→</kbd> <kbd>Space</kbd> next, <kbd>←</kbd> back, <kbd>Home</kbd> / <kbd>End</kbd> first / last.</li>
-      <li><kbd>N</kbd> shows the notes <b>on the same screen</b>. On a mirrored projector the audience sees them, so use this printout instead.</li>
-      <li>Jump to a slide by adding <code>#25</code> to the address. The appendix map is at the end of this page.</li>
+      <li><kbd>→</kbd> <kbd>Space</kbd> next, <kbd>←</kbd> back.</li>
+      <li><kbd>N</kbd> shows notes on the same screen; on a mirrored projector use this page instead.</li>
+      <li>Jump to a slide by adding <code>#20</code> to the address.</li>
     </ul>
   </div>
 </div>
-
-<h2>Numbers to know by heart</h2>
+<h2>Numbers to know</h2>
 <div class="nums">
-  <div><b>16 · 8 · 11</b><span>stakeholder groups · system requirements · quality requirements</span></div>
-  <div><b>10</b><span>language errors found in the given text</span></div>
-  <div><b>335</b><span>automated tests (330 offline + 5 live LLM)</span></div>
-  <div><b>744 h · 9 of 9</b><span>clean January hours · validation checks passed</span></div>
-  <div><b>389</b><span>dark or icy hours, the only place the network is used</span></div>
-  <div><b>+0.4 %</b><span>cross-validated skill; folds −3.2 to +4.7 %</span></div>
-  <div><b>1.00 · r = 0.003</b><span>variance/mean · Year N vs N+1 on identical inputs</span></div>
+  <div><b>40–80 km/h</b><span>allowed limits, steps of 10</span></div>
+  <div><b>389</b><span>dark or icy hours, where the network is used</span></div>
+  <div><b>+0.4 %</b><span>network skill over guessing the average</span></div>
   <div><b>60 km/h · 230 h</b><span>fallback limit and its evidence; 40 km/h has only 7 h</span></div>
-  <div><b>964 → 822</b><span>near-accidents Year N → N+1, with identical sensor files</span></div>
+  <div><b>335</b><span>automated tests (330 offline + 5 live LLM)</span></div>
+  <div><b>964 → 822</b><span>near-accidents Year N → N+1, identical sensor files</span></div>
 </div>
-
 <h2>Timing plan</h2>
 <table>
   <tr><th>#</th><th>Slide</th><th>Speaker</th><th>Time</th><th>Clock at end</th></tr>
   <tr><td class="n">1</td><td>Title</td><td><span class="who g">Gheorghe</span></td><td class="t">0:30</td><td class="t">0:30</td></tr>
-  <tr><td class="n">2</td><td>Roadmap</td><td><span class="who g">Gheorghe</span></td><td class="t">0:30</td><td class="t">1:00</td></tr>
-  <tr><td class="n">3</td><td>Context · The problem</td><td><span class="who g">Gheorghe</span></td><td class="t">0:45</td><td class="t">1:45</td></tr>
-  <tr><td class="n">4</td><td>Context · Stakeholders</td><td><span class="who g">Gheorghe</span></td><td class="t">0:45</td><td class="t">2:30</td></tr>
-  <tr><td class="n">5</td><td>Requirements · System</td><td><span class="who m">Mihail</span></td><td class="t">0:45</td><td class="t">3:15</td></tr>
-  <tr><td class="n">6</td><td>Requirements · Specifications</td><td><span class="who m">Mihail</span></td><td class="t">0:50</td><td class="t">4:05</td></tr>
-  <tr><td class="n">7</td><td>Requirements · Quality</td><td><span class="who m">Mihail</span></td><td class="t">0:30</td><td class="t">4:35</td></tr>
-  <tr><td class="n">8</td><td>Requirements · Test cases</td><td><span class="who m">Mihail</span></td><td class="t">0:50</td><td class="t">5:25</td></tr>
-  <tr><td class="n">9</td><td>Data · What we received</td><td><span class="who g">Gheorghe</span></td><td class="t">0:50</td><td class="t">6:15</td></tr>
-  <tr><td class="n">10</td><td>Design · Architecture</td><td><span class="who g">Gheorghe</span></td><td class="t">0:50</td><td class="t">7:05</td></tr>
-  <tr><td class="n">11</td><td>Design · Neural network</td><td><span class="who g">Gheorghe</span></td><td class="t">0:50</td><td class="t">7:55</td></tr>
-  <tr><td class="n">12</td><td>Design · LLM for air quality</td><td><span class="who m">Mihail</span></td><td class="t">0:45</td><td class="t">8:40</td></tr>
-  <tr><td class="n">13</td><td>Design · One cycle (GUI)</td><td><span class="who m">Mihail</span></td><td class="t">0:40</td><td class="t">9:20</td></tr>
-  <tr><td class="n">14</td><td>Results · The network</td><td><span class="who g">Gheorghe</span></td><td class="t">0:50</td><td class="t">10:10</td></tr>
-  <tr><td class="n">15</td><td>Results · Requirements check</td><td><span class="who m">Mihail</span></td><td class="t">0:55</td><td class="t">11:05</td></tr>
-  <tr><td class="n">16</td><td>Results · Retraining</td><td><span class="who g">Gheorghe</span></td><td class="t">0:45</td><td class="t">11:50</td></tr>
-  <tr><td class="n">17</td><td>Wrap-up · Use of AI</td><td><span class="who m">Mihail</span></td><td class="t">0:35</td><td class="t">12:25</td></tr>
-  <tr><td class="n">18</td><td>Wrap-up · Conclusion</td><td><span class="who m">Mihail</span></td><td class="t">0:45</td><td class="t">13:10</td></tr>
-  <tr><td class="n">19</td><td>Questions</td><td><span class="who b">Both</span></td><td class="t">0:15</td><td class="t">13:25</td></tr>
+  <tr><td class="n">2</td><td>The problem</td><td><span class="who g">Gheorghe</span></td><td class="t">1:00</td><td class="t">1:30</td></tr>
+  <tr><td class="n">3</td><td>Stakeholders</td><td><span class="who g">Gheorghe</span></td><td class="t">0:45</td><td class="t">2:15</td></tr>
+  <tr><td class="n">4</td><td>Requirements</td><td><span class="who g">Gheorghe</span></td><td class="t">1:00</td><td class="t">3:15</td></tr>
+  <tr><td class="n">5</td><td>Specifications</td><td><span class="who g">Gheorghe</span></td><td class="t">0:50</td><td class="t">4:05</td></tr>
+  <tr><td class="n">6</td><td>Data</td><td><span class="who g">Gheorghe</span></td><td class="t">0:50</td><td class="t">4:55</td></tr>
+  <tr><td class="n">7</td><td>Architecture</td><td><span class="who m">Mihail</span></td><td class="t">1:00</td><td class="t">5:55</td></tr>
+  <tr><td class="n">8</td><td>Neural network</td><td><span class="who m">Mihail</span></td><td class="t">1:00</td><td class="t">6:55</td></tr>
+  <tr><td class="n">9</td><td>LLM for air quality</td><td><span class="who m">Mihail</span></td><td class="t">0:50</td><td class="t">7:45</td></tr>
+  <tr><td class="n">10</td><td>Neural network results</td><td><span class="who m">Mihail</span></td><td class="t">1:00</td><td class="t">8:45</td></tr>
+  <tr><td class="n">11</td><td>Requirements check</td><td><span class="who m">Mihail</span></td><td class="t">1:15</td><td class="t">10:00</td></tr>
+  <tr><td class="n">12</td><td>Conclusion</td><td><span class="who m">Mihail</span></td><td class="t">0:45</td><td class="t">10:45</td></tr>
+  <tr><td class="n">13</td><td>Questions</td><td><span class="who b">Both</span></td><td class="t">0:15</td><td class="t">11:00</td></tr>
 </table>
-<p class="muted" style="margin-top:10px">About 6½ minutes each, handing over at chapter boundaries. Checkpoint: slide 10 should start at about 6:15. <b>If you are behind:</b> say only the headline on slides 7, 13 and 17. <b>If you only get 10 minutes:</b> skip 7 and 13 and keep the rest short.</p>
+<p class="muted" style="margin-top:10px">Handover after slide 6 (Data). Checkpoint: slide 7 starts at about 5:00.</p>
 
 <h2 class="pb">Cue cards</h2>
-<p class="muted">Each card: the sentence to say first (yellow bar), the points to hit, and the handover.</p>
+<p class="muted">Each card: the sentence to say first (yellow bar), then the points.</p>
 
 <div class="card"><div class="top"><span class="num">01</span><span class="ttl">Title</span><span class="who g">Gheorghe</span><span class="time">0:30</span></div>
-  <p class="key">“SpeedLimit: a highway speed limit that reacts to light, weather and air quality.”</p>
-  <ul><li>Introduce both of you; SE4AI case study.</li><li>We went through the whole course cycle on one project, from stakeholders to a tested, running system.</li></ul>
-  <p class="point"><b>Point at:</b> the 60 km/h sign. “Keep this number in mind; it comes back.”</p></div>
+  <p class="key">“SpeedLimit: a sign that sets the highway speed limit every hour.”</p>
+  <ul><li>Introduce both of you; SE4AI case study.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">02</span><span class="ttl">Roadmap</span><span class="who g">Gheorghe</span><span class="time">0:30</span></div>
-  <p class="key">“Six steps, and each one builds on the one before.”</p>
-  <ul><li>Context, requirements, data, design, results, wrap-up.</li><li>Requirements become tests; at the end we check every requirement against them.</li><li>The tracker at the top shows where we are.</li></ul></div>
+<div class="card"><div class="top"><span class="num">02</span><span class="ttl">The problem</span><span class="who g">Gheorghe</span><span class="time">1:00</span></div>
+  <p class="key">“Each situation gets the simplest tool that fits.”</p>
+  <ul><li>Dark or icy: a neural network, because we have accident data.</li><li>Poor air: an LLM, because there is no data but it knows the EU limits.</li><li>Normal: a plain rule, 80 km/h. No AI where it is not needed.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">03</span><span class="ttl">Context · The problem</span><span class="who g">Gheorghe</span><span class="time">0:45</span></div>
-  <p class="key">“Lower the limit when it is dark, icy or the air is poor; otherwise keep 80.”</p>
-  <ul><li>Dark or black ice: a neural network decides, learned from past near-accidents.</li><li>Poor air: no data to learn from, so an LLM decides from a forecast API.</li><li>Nothing applies: a plain rule, 80 km/h.</li><li>We received sensor descriptions, one January of hourly readings, and an accident log.</li></ul></div>
+<div class="card"><div class="top"><span class="num">03</span><span class="ttl">Stakeholders</span><span class="who g">Gheorghe</span><span class="time">0:45</span></div>
+  <p class="key">“These are the people who care about the limit.”</p>
+  <ul><li>Read each card: who, and what they want.</li><li>Each one leads to a requirement on the next slide.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">04</span><span class="ttl">Context · Stakeholders</span><span class="who g">Gheorghe</span><span class="time">0:45</span></div>
-  <p class="key">“Sixteen groups care; six of them shape the requirements.”</p>
-  <ul><li>Read the cards by their arrow: who wants what, and which requirement follows.</li><li>Mention the works council: operators could be monitored through the logs.</li></ul>
-  <p class="hand"><b>→ Mihail:</b> “Mihail turns these interests into requirements.”</p></div>
+<div class="card"><div class="top"><span class="num">04</span><span class="ttl">Requirements</span><span class="who g">Gheorghe</span><span class="time">1:00</span></div>
+  <p class="key">“Three requirements were given; they left gaps, so we added five.”</p>
+  <ul><li>REQ1 is the hard one: at most 1 near-accident per hour.</li><li>Each added one answers a ‘what if’: two reasons at once, how often, a failure, the operator disagrees, someone asks why.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">05</span><span class="ttl">Requirements · System</span><span class="who m">Mihail</span><span class="time">0:45</span></div>
-  <p class="key">“Three requirements were given; five more were needed before anyone could build it.”</p>
-  <ul><li>REQ1 is the hard one: a measurable promise about the road.</li><li>Added: strictest wins, hourly, no silent higher limit on failure, override, logging. Each from a stakeholder on the slide before.</li></ul></div>
+<div class="card"><div class="top"><span class="num">05</span><span class="ttl">Specifications</span><span class="who g">Gheorghe</span><span class="time">0:50</span></div>
+  <p class="key">“Specifications turn the requirements into exact numbers we can test.”</p>
+  <ul><li>SPEC1–4 given, SPEC5–6 ours.</li><li>Two errors in the text: lux vs millilux (factor 1000), and ‘on average’ over what?</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">06</span><span class="ttl">Requirements · Specifications</span><span class="who m">Mihail</span><span class="time">0:50</span></div>
-  <p class="key">“Specifications make the requirements exact enough to test.”</p>
-  <ul><li>SPEC1–4 given; SPEC5 (what poor air means) and SPEC6 (which limits exist) are ours.</li><li>Ten language errors; read the three cards. Millilux vs lux would silently break the Router.</li><li>“On average over what?” is still open; it comes back at the end.</li></ul></div>
+<div class="card"><div class="top"><span class="num">06</span><span class="ttl">Data</span><span class="who g">Gheorghe</span><span class="time">0:50</span></div>
+  <p class="key">“One January of sensor readings and an accident log.”</p>
+  <ul><li>We learn from near-accidents: 32 real accidents is too few.</li><li>Fixes: hours shifted by one, sensor type T used twice, an undocumented sensor, licence plates dropped.</li></ul>
+  <p class="hand"><b>→ Mihail:</b> “Mihail shows how we built it.”</p></div>
 
-<div class="card"><div class="top"><span class="num">07</span><span class="ttl">Requirements · Quality</span><span class="who m">Mihail</span><span class="time">0:30</span></div>
-  <p class="key">“Safe on failure, traceable, private.”</p>
-  <ul><li>Eight of eleven quality requirements shown.</li><li>Safety drives the design: on any failure, keep the limit or fall back, and ask a human.</li></ul></div>
+<div class="card"><div class="top"><span class="num">07</span><span class="ttl">Architecture</span><span class="who m">Mihail</span><span class="time">1:00</span></div>
+  <p class="key">“The AI only proposes. Simple rules decide.”</p>
+  <ul><li>Bad input is rejected and the current limit stays.</li><li>Router: dark or icy? Only then the network runs. The LLM always checks the air.</li><li>Decider takes the lowest proposal, otherwise 80. Any failure: safe limit plus operator review.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">08</span><span class="ttl">Requirements · Test cases</span><span class="who m">Mihail</span><span class="time">0:50</span></div>
-  <p class="key">“Every requirement became a test before the code existed.”</p>
-  <ul><li>Each row: written first, watched fail, then made pass.</li><li>Boundaries matter: exactly 500 mlx is not dark, exactly 0 °C is not below zero.</li><li>335 tests: 330 offline, 5 against the real local LLM. Full tables in the appendix.</li></ul>
-  <p class="hand"><b>→ Gheorghe:</b> “Gheorghe shows the data we built on.”</p></div>
+<div class="card"><div class="top"><span class="num">08</span><span class="ttl">Neural network</span><span class="who m">Mihail</span><span class="time">1:00</span></div>
+  <p class="key">“The speed limit is an input, so we can ask: how risky would each limit be?”</p>
+  <ul><li>Nine inputs, output near-accidents per hour, asked for 40, 50, 60, 70 km/h.</li><li>Ten small networks: their disagreement is the confidence.</li><li>Trained with PyTorch on the 389 dark or icy hours, split by whole days.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">09</span><span class="ttl">Data · What we received</span><span class="who g">Gheorghe</span><span class="time">0:50</span></div>
-  <p class="key">“The files needed structural repairs, not much cleaning.”</p>
-  <ul><li>Class diagram: accidents meet sensors only through day and hour.</li><li>Type T is two things; sensor 19 undocumented; 7, 10, 17 silent; hours shifted by one; licence plates dropped.</li><li>The value errors from the course slides are not in this version of the files; the cleaner still handles them.</li><li>Nine validation checks must pass before training starts.</li></ul></div>
+<div class="card"><div class="top"><span class="num">09</span><span class="ttl">LLM for air quality</span><span class="who m">Mihail</span><span class="time">0:50</span></div>
+  <p class="key">“The LLM is boxed in on both sides.”</p>
+  <ul><li>Only two checked numbers go in, so nothing can be injected.</li><li>Only 0, 10, 20, 30 or 40 km/h can come out.</li><li>Asked 3 times, majority wins. No valid answer: a formula decides plus review. Runs locally.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">10</span><span class="ttl">Design · Architecture</span><span class="who g">Gheorghe</span><span class="time">0:50</span></div>
-  <p class="key">“Plain rules decide when the AI is used.”</p>
-  <ul><li>GUI or timer starts a cycle; the orchestrator calls components in a fixed order.</li><li>Router and Decider are plain code, because SPEC1, SPEC2 and REQ3 are exact rules.</li><li>Only the LLMManager reaches the LLM; a test checks every import against the diagram.</li></ul></div>
+<div class="card"><div class="top"><span class="num">10</span><span class="ttl">Neural network results</span><span class="who m">Mihail</span><span class="time">1:00</span></div>
+  <p class="key">“The network is no better than guessing the average.”</p>
+  <ul><li>+0.4 % over 20 cross-validation runs: noise.</li><li>The counts behave like pure chance; same conditions next year give unrelated counts.</li><li>With a planted signal the same code learns it: the problem is the data, not the code.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">11</span><span class="ttl">Design · Neural network</span><span class="who g">Gheorghe</span><span class="time">0:50</span></div>
-  <p class="key">“Nine inputs in, near-accidents per hour out.”</p>
-  <ul><li>The speed limit is the input we control; redundant sensors combined by median.</li><li>Asked once per candidate limit, 40 to 70 km/h.</li><li>Ten small networks, Poisson loss, 389 dark or icy hours, split by whole days.</li></ul>
-  <p class="hand"><b>→ Mihail:</b> “Mihail on the second AI component.”</p></div>
+<div class="card"><div class="top"><span class="num">11</span><span class="ttl">Requirements check</span><span class="who m">Mihail</span><span class="time">1:15</span></div>
+  <p class="key">“Everything is met and tested, except REQ1.”</p>
+  <ul><li>335 tests; each requirement has its own.</li><li>Every limit averages above 1 near-accident per hour in dark or icy hours.</li><li>So: fixed 60 km/h (most data, 230 h) plus operator review. ‘Lowest prediction’ chose 70 on icy nights.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">12</span><span class="ttl">Design · LLM for air quality</span><span class="who m">Mihail</span><span class="time">0:45</span></div>
-  <p class="key">“The LLM is untrusted: numbers in, one of five allowed answers out.”</p>
-  <ul><li>Open-Meteo forecast, worst PM10 and NO₂ of the next 6 hours (SPEC5).</li><li>Asked 3 times; majority wins; agreement is consistency, not correctness.</li><li>No valid answer: rule-based fallback plus a review flag.</li></ul></div>
+<div class="card"><div class="top"><span class="num">12</span><span class="ttl">Conclusion</span><span class="who m">Mihail</span><span class="time">0:45</span></div>
+  <p class="key">“Three lessons.”</p>
+  <ul><li>Requirements first: they caught errors before the code.</li><li>Always a baseline: it showed honestly that the network has no skill.</li><li>Guard the AI: rules, fallbacks and a human keep it safe.</li><li>Next: clarify the Year N+1 file, define REQ1 precisely, run a speed-limit trial.</li></ul>
+</div>
 
-<div class="card"><div class="top"><span class="num">13</span><span class="ttl">Design · One cycle (GUI)</span><span class="who m">Mihail</span><span class="time">0:40</span></div>
-  <p class="key">“This is what the operator sees.”</p>
-  <ul><li>Six steps, one breath.</li><li>Icy night: 60 km/h, review banner, network at Low confidence, LLM card.</li><li>Override any time, and it is logged: REQ7 and REQ8 in practice.</li></ul>
-  <p class="hand"><b>→ Gheorghe:</b> “So, what did the network learn?”</p></div>
-
-<div class="card"><div class="top"><span class="num">14</span><span class="ttl">Results · The network</span><span class="who g">Gheorghe</span><span class="time">0:50</span></div>
-  <p class="key">“The network predicts no better than the average.”</p>
-  <ul><li>One split said +1.7 %; 20 folds say +0.4 %, between −3.2 and +4.7: noise.</li><li>Why: counts behave like pure chance (1.00), and identical conditions in two years give unrelated counts.</li><li>Control test: a planted signal is learned, so the code works and the data is the limit.</li></ul>
-  <p class="hand"><b>→ Mihail:</b> “Mihail goes back to the requirements.”</p></div>
-
-<div class="card"><div class="top"><span class="num">15</span><span class="ttl">Results · Requirements check</span><span class="who m">Mihail</span><span class="time">0:55</span></div>
-  <p class="key">“Every requirement is met and tested, except REQ1.”</p>
-  <ul><li>Go down the list: REQ2 to REQ8 and privacy each have passing tests.</li><li>Chart: every limit is above 1 near-accident per hour. 40 km/h has only 7 hours: noise or confounding, not proof that slower is riskier.</li><li>So in every dark or icy hour: 60 km/h and an operator review. “That is the 60 from the title.”</li></ul>
-  <p class="hand"><b>→ Gheorghe:</b> “And what about next year's data?”</p></div>
-
-<div class="card"><div class="top"><span class="num">16</span><span class="ttl">Results · Retraining</span><span class="who g">Gheorghe</span><span class="time">0:45</span></div>
-  <p class="key">“Do not retrain: the Year N+1 sensor file repeats last year.”</p>
-  <ul><li>Drift is exactly zero on every sensor, yet near-accidents fell from 964 to 822.</li><li>Neither the old nor a retrained model has skill.</li><li>First find out why the file repeats Year N.</li></ul>
-  <p class="hand"><b>→ Mihail:</b> “Mihail wraps up.”</p></div>
-
-<div class="card"><div class="top"><span class="num">17</span><span class="ttl">Wrap-up · Use of AI</span><span class="who m">Mihail</span><span class="time">0:35</span></div>
-  <p class="key">“Ourselves first, then prompts.”</p>
-  <ul><li>Course rule: without AI, initial prompt, improved prompt.</li><li>Initial prompts hid bad decisions, such as the “lowest prediction” rule that picked 70 km/h on icy nights.</li><li>Improved prompts: our files as context, short and testable answers.</li></ul></div>
-
-<div class="card"><div class="top"><span class="num">18</span><span class="ttl">Wrap-up · Conclusion</span><span class="who m">Mihail</span><span class="time">0:45</span></div>
-  <p class="key">“A sound system, on data that cannot carry REQ1.”</p>
-  <ul><li>Three lessons: requirements first, always a baseline, guard weak models.</li><li>Next: explain the Year N+1 file, define REQ1 precisely, run a trial of about 260 dark or icy hours per limit.</li><li>Until then, operators decide, supported by the system.</li></ul></div>
-
-<div class="card"><div class="top"><span class="num">19</span><span class="ttl">Questions</span><span class="who b">Both</span><span class="time">0:15</span></div>
-  <p class="key">“Built and tested against every requirement; REQ1 needs better data.”</p>
-  <ul><li>Whoever presented the related slide takes the question.</li><li>Use the appendix when a table helps; never improvise a number.</li></ul></div>
+<div class="card"><div class="top"><span class="num">13</span><span class="ttl">Questions</span><span class="who b">Both</span><span class="time">0:15</span></div>
+  <p class="key">“Thank you. Questions?”</p>
+  <ul><li>Use the appendix for details; never improvise a number.</li></ul>
+</div>
 
 <h2>Likely questions</h2>
-<p class="muted">Short answers. If you don't know, say “we did not measure that” and offer to follow up.</p>
+<div class="qa"><div class="q">Why 60 km/h and not the lowest prediction?</div>
+  <p>No limit meets REQ1. ‘Lowest prediction’ chose 70 km/h on icy nights, because in the data lower limits come with more near-accidents: noise or confounding. 60 has the most evidence (230 h); 40 has only 7 h. An operator reviews it.</p>
+  <p class="ref">Slide 11 · appendix 27</p></div>
 
-<div class="qa"><div class="q"><span class="who m">Mihail</span>Where do the added requirements come from?</div>
-  <p>From the stakeholders: drivers give REQ1 and REQ3, operators REQ7, police and regulators REQ8, maintenance REQ6, and the data protection officer the privacy requirement.</p>
-  <p class="ref">Slides 4, 5 · appendix 20–21</p></div>
+<div class="qa"><div class="q">If the network adds nothing, why keep it?</div>
+  <p>Today it does not change the outcome, and we say so. It stays so it can take over once a trial gives data with real signal.</p>
+  <p class="ref">Slide 10</p></div>
 
-<div class="qa"><div class="q"><span class="who g">Gheorghe</span>Why not set 40 km/h whenever it is dark or icy?</div>
-  <p>There are only 7 hours of evidence at 40 km/h, and the data does not show that it helps. Published research supports 40 on black ice in darkness, but not for darkness alone. That trade-off is for expert rules and a trial.</p>
-  <p class="ref">Slide 15 · appendix 30</p></div>
+<div class="qa"><div class="q">How do you know it is the data and not your code?</div>
+  <p>Control test: with a planted signal in fake data, the same code learns it. And the counts behave like pure chance (variance = mean).</p>
+  <p class="ref">Slide 10</p></div>
 
-<div class="qa"><div class="q"><span class="who g">Gheorghe</span>If the network adds nothing, why keep it?</div>
-  <p>Today it does not change the outcome, and we say so. It stays in the design so that it can take over once a trial gives data with real signal.</p>
-  <p class="ref">Slides 14, 15 · appendix 29</p></div>
+<div class="qa"><div class="q">Can the LLM do something dangerous?</div>
+  <p>Only two checked numbers go in, only 0–40 km/h reductions come out, asked 3 times with a majority vote, every call logged. No valid answer: labelled formula plus review.</p>
+  <p class="ref">Slide 9 · appendix 19</p></div>
 
-<div class="qa"><div class="q"><span class="who g">Gheorghe</span>Would a bigger model do better?</div>
-  <p>No. A linear model does no better than a constant either. The counts behave like pure chance, so the limit is the data, not the model.</p>
-  <p class="ref">Slide 14</p></div>
+<div class="qa"><div class="q">What if a sensor fails?</div>
+  <p>Several sensors are combined by median; impossible readings are rejected; the current limit stays; it is logged and flagged (REQ6).</p>
+  <p class="ref">Slide 7</p></div>
 
-<div class="qa"><div class="q"><span class="who g">Gheorghe</span>Is traffic an input, or something to optimise?</div>
-  <p>We use it as an input because it describes the conditions. Optimising throughput would be a new requirement with its own trade-off against safety; the case study does not ask for it.</p>
-  <p class="ref">Slide 11</p></div>
+<div class="qa"><div class="q">Why only near-accidents?</div>
+  <p>REQ1 is stated in near-accidents. January has 32 real accidents against about 960 near-accidents: too few to learn from.</p>
+  <p class="ref">Slide 6</p></div>
 
-<div class="qa"><div class="q"><span class="who g">Gheorghe</span>Why count only near-accidents and not real accidents?</div>
-  <p>REQ1 is stated in near-accidents (SPEC4). January has only 32 real accidents against about 960 near-accidents, too few to learn from. A combined danger index would be a change to REQ1.</p>
-  <p class="ref">Slides 5, 6</p></div>
+<div class="qa"><div class="q">Would you retrain on Year N+1?</div>
+  <p>Not yet. Its sensor readings are identical to Year N, yet near-accidents fell 964 → 822. Clarify the file first; retraining gave no skill either.</p>
+  <p class="ref">Appendix 26</p></div>
 
-<div class="qa"><div class="q"><span class="who m">Mihail</span>Can we trust the LLM?</div>
-  <p>We don't trust it blindly: numbers in, five allowed answers out, three samples, a fallback and a review flag. All 5 golden cases are in range.</p>
-  <p class="ref">Slide 12 · appendix 23</p></div>
-
-<div class="qa"><div class="q"><span class="who g">Gheorghe</span>Why is the Year N+1 file identical to Year N?</div>
-  <p>We don't know. A real year cannot repeat value for value, so it is most likely a copy. Finding out comes first, because it decides whether retraining makes sense.</p>
-  <p class="ref">Slide 16</p></div>
-
-<div class="qa"><div class="q"><span class="who g">Gheorghe</span>What happens if a sensor fails?</div>
-  <p>Redundant sensors are combined by median, impossible readings are rejected, the current limit is kept, and the cycle is logged. A failure never silently raises the limit (REQ6).</p>
-  <p class="ref">Slides 8, 9</p></div>
-
-<div class="qa"><div class="q"><span class="who m">Mihail</span>Is it legal to deploy this?</div>
-  <p>It is high-risk under the EU AI Act. Data governance (Art. 10) and accuracy (Art. 15) are not met today. This is our reading, not legal advice.</p>
-  <p class="ref">Appendix 32</p></div>
-
-<div class="qa"><div class="q"><span class="who m">Mihail</span>What would the change requests cost?</div>
-  <p>Fahrenheit sensors and “only skidding counts” each touch one component, then retraining. Exempting electric cars is large: two limits through the Decider, GUI, log and the signs.</p>
+<div class="qa"><div class="q">Why not generate synthetic data?</div>
+  <p>We tested it: copies of noise add nothing, and data with an assumed speed effect only teaches the network our assumption.</p>
   <p class="ref">Appendix 28</p></div>
+
+<div class="qa"><div class="q">Is it ready to deploy?</div>
+  <p>As decision support, yes; as an autonomous system, no. REQ1 needs better data: a precise REQ1 and a controlled trial (about 260 dark or icy hours per limit).</p>
+  <p class="ref">Slide 12 · appendix 31</p></div>
 
 <h2>Appendix map</h2>
 <table>
-  <tr><th>Slide</th><th>Content</th><th>Use it for</th></tr>
-  <tr><td class="n">20</td><td>Stakeholders and glossary</td><td>“Who did you consider?”</td></tr>
-  <tr><td class="n">21</td><td>Added requirements, quality requirements, assumptions</td><td>Requirements detail</td></tr>
-  <tr><td class="n">22</td><td>Router test cases (SpeedLimit10b)</td><td>Boundary questions on dark and black ice</td></tr>
-  <tr><td class="n">23</td><td>LLM test cases (SpeedLimit10c)</td><td>Golden ranges, guardrails, failure cases</td></tr>
-  <tr><td class="n">24</td><td>Tests per component</td><td>“Is every component tested?”</td></tr>
-  <tr><td class="n">25–26</td><td>Sequence diagram, two parts</td><td>“Walk us through one cycle in detail”</td></tr>
-  <tr><td class="n">27</td><td>Training-stage architecture</td><td>Validation gate, training components</td></tr>
-  <tr><td class="n">28</td><td>Change requests (SpeedLimit21)</td><td>Fahrenheit, skidding only, electric cars</td></tr>
-  <tr><td class="n">29</td><td>REQ1 policy</td><td>“Why 60 and not the lowest prediction?”</td></tr>
-  <tr><td class="n">30</td><td>Research cross-check</td><td>What published research would set</td></tr>
-  <tr><td class="n">31</td><td>Synthetic data</td><td>“Why not generate more data?”</td></tr>
-  <tr><td class="n">32</td><td>Human oversight and EU AI Act</td><td>Legal and human-in-the-loop questions</td></tr>
-  <tr><td class="n">33</td><td>Next steps and trial size</td><td>“How long would a trial take?”</td></tr>
+  <tr><th>Slide</th><th>Content</th></tr>
+  <tr><td class="n">14</td><td>Stakeholders and glossary</td></tr>
+  <tr><td class="n">15</td><td>Requirements and assumptions</td></tr>
+  <tr><td class="n">16</td><td>Quality requirements</td></tr>
+  <tr><td class="n">17</td><td>Test cases</td></tr>
+  <tr><td class="n">18</td><td>Router test cases</td></tr>
+  <tr><td class="n">19</td><td>LLM test cases</td></tr>
+  <tr><td class="n">20</td><td>Tests per component</td></tr>
+  <tr><td class="n">21</td><td>Architecture diagram</td></tr>
+  <tr><td class="n">22</td><td>GUI, one cycle</td></tr>
+  <tr><td class="n">23–24</td><td>Sequence diagram</td></tr>
+  <tr><td class="n">25</td><td>Training architecture</td></tr>
+  <tr><td class="n">26</td><td>Retraining (Year N+1)</td></tr>
+  <tr><td class="n">27</td><td>REQ1 policy: why 60</td></tr>
+  <tr><td class="n">28</td><td>Synthetic data</td></tr>
+  <tr><td class="n">29</td><td>Research cross-check</td></tr>
+  <tr><td class="n">30</td><td>EU AI Act</td></tr>
+  <tr><td class="n">31</td><td>Next steps and trial size</td></tr>
+  <tr><td class="n">32</td><td>Change requests</td></tr>
 </table>
 
 </div>
